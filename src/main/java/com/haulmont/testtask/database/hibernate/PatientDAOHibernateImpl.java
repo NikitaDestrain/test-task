@@ -1,29 +1,36 @@
 package com.haulmont.testtask.database.hibernate;
 
 import com.haulmont.testtask.database.interfaces.PatientDAO;
-import com.haulmont.testtask.database.utils.HibernateUtil;
-import com.haulmont.testtask.domain.Patient;
+import com.haulmont.testtask.database.utils.dto.PatientDTOResolver;
+import com.haulmont.testtask.database.utils.hibernate.HibernateUtil;
+import com.haulmont.testtask.domain.dto.PatientDTO;
+import com.haulmont.testtask.domain.entity.Patient;
 import com.haulmont.testtask.exception.database.DAOEntityCreationException;
 import com.haulmont.testtask.exception.database.DAOEntityDeletingException;
 import com.haulmont.testtask.exception.database.DAOEntityReadingException;
 import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
-import com.haulmont.testtask.factory.PatientFactory;
-import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PatientDAOHibernateImpl implements PatientDAO {
 
-    private Session session;
+    private EntityManager entityManager;
+    private PatientDTOResolver patientDTOResolver;
+
+    public PatientDAOHibernateImpl() {
+        patientDTOResolver = PatientDTOResolver.getInstance();
+    }
 
     @Override
     public void create(Patient patient) throws DAOEntityCreationException {
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.save(patient);
-            session.getTransaction().commit();
+            entityManager = HibernateUtil.getEntityManager();
+            entityManager.getTransaction().begin();
+            entityManager.persist(patient);
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityCreationException(e.getMessage());
         } finally {
@@ -32,26 +39,29 @@ public class PatientDAOHibernateImpl implements PatientDAO {
     }
 
     @Override
-    public Patient read(Long id) throws DAOEntityReadingException {
-        Patient patient;
+    public PatientDTO read(Long id) throws DAOEntityReadingException {
+        PatientDTO patientDto;
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            patient = session.get(Patient.class, id);
+            entityManager = HibernateUtil.getEntityManager();
+            entityManager.getTransaction().begin();
+            Patient patient = entityManager.find(Patient.class, id);
+            patientDto = patientDTOResolver.resolve(patient);
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityReadingException(e.getMessage());
         } finally {
             finishSession();
         }
-        return patient;
+        return patientDto;
     }
 
     @Override
     public void update(Patient patient) throws DAOEntityUpdatingException {
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.update(patient);
-            session.getTransaction().commit();
+            entityManager = HibernateUtil.getEntityManager();
+            entityManager.getTransaction().begin();
+            entityManager.merge(patient);
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityUpdatingException(e.getMessage());
         } finally {
@@ -62,10 +72,10 @@ public class PatientDAOHibernateImpl implements PatientDAO {
     @Override
     public void delete(Patient patient) throws DAOEntityDeletingException {
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.delete(patient);
-            session.getTransaction().commit();
+            entityManager = HibernateUtil.getEntityManager();
+            entityManager.getTransaction().begin();
+            entityManager.remove(patient);
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityDeletingException(e.getMessage());
         } finally {
@@ -74,11 +84,15 @@ public class PatientDAOHibernateImpl implements PatientDAO {
     }
 
     @Override
-    public List<Patient> getAll() throws DAOEntityReadingException {
-        List<Patient> list;
+    public List<PatientDTO> getAll() throws DAOEntityReadingException {
+        List<PatientDTO> list = new ArrayList<>();
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            list = session.createCriteria(Patient.class).list();
+            entityManager = HibernateUtil.getEntityManager();
+            entityManager.getTransaction().begin();
+            for (Patient p : entityManager.createQuery("SELECT p FROM Patient p", Patient.class).getResultList()) {
+                list.add(patientDTOResolver.resolve(p));
+            }
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityReadingException(e.getMessage());
         } finally {
@@ -86,6 +100,7 @@ public class PatientDAOHibernateImpl implements PatientDAO {
         }
         return Collections.unmodifiableList(list);
     }
+
 
     @Override
     public boolean contains(Long id) {
@@ -99,8 +114,8 @@ public class PatientDAOHibernateImpl implements PatientDAO {
     }
 
     private void finishSession() {
-        if (session != null && session.isOpen()) {
-            session.close();
+        if (entityManager != null && entityManager.isOpen()) {
+            entityManager.close();
         }
     }
 }

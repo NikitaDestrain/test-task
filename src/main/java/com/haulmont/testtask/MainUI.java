@@ -1,9 +1,8 @@
 package com.haulmont.testtask;
 
 import com.haulmont.testtask.database.hibernate.DAOManagerHibernateImpl;
-import com.haulmont.testtask.domain.Doctor;
-import com.haulmont.testtask.domain.Specialization;
-import com.haulmont.testtask.factory.DoctorFactory;
+import com.haulmont.testtask.database.hibernate.DoctorDAOHibernateImpl;
+import com.haulmont.testtask.domain.dto.DoctorDTO;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
@@ -18,11 +17,12 @@ public class MainUI extends UI {
         layout.setSizeFull();
         layout.setMargin(true);
         try {
-            layout.addComponent(new Label(DAOManagerHibernateImpl.getInstance().getDoctorDao().read(new Long(0)).toString()));
+            for (DoctorDTO doctorDTO : DAOManagerHibernateImpl.getInstance().getDoctorDao().getAll()){
+                layout.addComponent(new Label(doctorDTO.toString()));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         setContent(layout);
     }

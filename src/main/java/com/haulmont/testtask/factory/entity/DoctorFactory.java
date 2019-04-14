@@ -1,7 +1,7 @@
-package com.haulmont.testtask.factory;
+package com.haulmont.testtask.factory.entity;
 
-import com.haulmont.testtask.domain.Doctor;
-import com.haulmont.testtask.domain.Specialization;
+import com.haulmont.testtask.domain.entity.Doctor;
+import com.haulmont.testtask.domain.entity.Specialization;
 
 public class DoctorFactory {
     public static Doctor create(String name, String surname, String patronymic, Specialization specialization) {
