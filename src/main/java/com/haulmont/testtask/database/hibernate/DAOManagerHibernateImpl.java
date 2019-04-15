@@ -12,6 +12,9 @@ public class DAOManagerHibernateImpl implements DAOManager {
     private PatientDAO patientDAO;
     private RecipeDAO recipeDAO;
 
+    private DAOManagerHibernateImpl() {
+    }
+
     public static DAOManagerHibernateImpl getInstance() {
         DAOManagerHibernateImpl localInstance = instance;
         if (localInstance == null) {

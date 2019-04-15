@@ -13,17 +13,21 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
+    @Basic
     @Column(name = "NAME")
     private String name;
+    @Basic
     @Column(name = "SURNAME")
     private String surname;
+    @Basic
     @Column(name = "PATRONYMIC")
     private String patronymic;
+    @Basic
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
     @OneToMany(fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             mappedBy = "patient",
-            targetEntity=Recipe.class)
+            targetEntity = Recipe.class)
     private Set<Recipe> recipeSet;
 }

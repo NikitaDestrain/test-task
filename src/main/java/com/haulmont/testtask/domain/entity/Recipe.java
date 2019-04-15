@@ -1,5 +1,7 @@
 package com.haulmont.testtask.domain.entity;
 
+import com.haulmont.testtask.database.utils.hibernate.PriorityConverter;
+import com.haulmont.testtask.domain.auxiliary.Priority;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -28,7 +30,7 @@ public class Recipe {
     @Basic
     @Column(name = "EXPIRATION_DATE")
     private Date expirationDate;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "PRIORITY_ID", nullable = false)
+    @Column(name = "PRIORITY")
+    @Convert(converter = PriorityConverter.class)
     private Priority priority;
 }

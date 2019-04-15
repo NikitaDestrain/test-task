@@ -1,5 +1,6 @@
 package com.haulmont.testtask.domain.dto;
 
+import com.haulmont.testtask.domain.auxiliary.Priority;
 import lombok.Data;
 
 import java.sql.Date;
@@ -12,5 +13,5 @@ public class RecipeDTO {
     private DoctorDTO doctor;
     private Date creationDate;
     private Date expirationDate;
-    private PriorityDTO priority;
+    private Priority priority;
 }

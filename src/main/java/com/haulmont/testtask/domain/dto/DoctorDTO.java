@@ -8,5 +8,5 @@ public class DoctorDTO {
     private String name;
     private String surname;
     private String patronymic;
-    private SpecializationDTO specialization;
+    private String specialization;
 }

@@ -22,9 +22,9 @@ public class Doctor {
     @Basic
     @Column(name = "PATRONYMIC")
     private String patronymic;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "SPECIALIZATION_ID", nullable = false)
-    private Specialization specialization;
+    @Basic
+    @Column(name = "SPECIALIZATION")
+    private String specialization;
     @OneToMany(fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             mappedBy = "doctor",

@@ -1,5 +1,3 @@
-DROP TABLE recipe;
-DROP TABLE doctor;
-DROP TABLE petient;
-DROP TABLE specialization;
-DROP TABLE priority;
+DROP TABLE IF EXISTS PUBLIC.recipe;
+DROP TABLE IF EXISTS PUBLIC.doctor;
+DROP TABLE IF EXISTS PUBLIC.patient;

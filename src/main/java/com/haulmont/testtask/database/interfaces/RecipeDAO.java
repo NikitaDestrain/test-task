@@ -10,15 +10,15 @@ import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 import java.util.List;
 
 public interface RecipeDAO {
-    public void create(Recipe recipe) throws DAOEntityCreationException;
+    void create(RecipeDTO recipe) throws DAOEntityCreationException;
 
-    public RecipeDTO read(Long id) throws DAOEntityReadingException;
+    RecipeDTO read(Long id) throws DAOEntityReadingException;
 
-    public void update(Recipe patient) throws DAOEntityUpdatingException;
+    void update(RecipeDTO patient) throws DAOEntityUpdatingException;
 
-    public void delete(Recipe patient) throws DAOEntityDeletingException;
+    void delete(RecipeDTO patient) throws DAOEntityDeletingException;
 
-    public List<RecipeDTO> getAll() throws DAOEntityReadingException;
+    List<RecipeDTO> getAll() throws DAOEntityReadingException;
 
-    public boolean contains(Long id);
+    boolean contains(Long id);
 }

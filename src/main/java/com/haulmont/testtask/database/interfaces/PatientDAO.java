@@ -10,15 +10,15 @@ import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 import java.util.List;
 
 public interface PatientDAO {
-    public void create(Patient patient) throws DAOEntityCreationException;
+    void create(PatientDTO patient) throws DAOEntityCreationException;
 
-    public PatientDTO read(Long id) throws DAOEntityReadingException;
+    PatientDTO read(Long id) throws DAOEntityReadingException;
 
-    public void update(Patient patient) throws DAOEntityUpdatingException;
+    void update(PatientDTO patient) throws DAOEntityUpdatingException;
 
-    public void delete(Patient patient) throws DAOEntityDeletingException;
+    void delete(PatientDTO patient) throws DAOEntityDeletingException;
 
-    public List<PatientDTO> getAll() throws DAOEntityReadingException;
+    List<PatientDTO> getAll() throws DAOEntityReadingException;
 
-    public boolean contains(Long id);
+    boolean contains(Long id);
 }

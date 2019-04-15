@@ -1,7 +1,7 @@
 package com.haulmont.testtask.database.hibernate;
 
 import com.haulmont.testtask.database.interfaces.RecipeDAO;
-import com.haulmont.testtask.database.utils.dto.RecipeDTOResolver;
+import com.haulmont.testtask.database.utils.dto.RecipeResolver;
 import com.haulmont.testtask.database.utils.hibernate.HibernateUtil;
 import com.haulmont.testtask.domain.dto.RecipeDTO;
 import com.haulmont.testtask.domain.entity.Recipe;
@@ -18,18 +18,19 @@ import java.util.List;
 public class RecipeDAOHibernateImpl implements RecipeDAO {
 
     private EntityManager entityManager;
-    private RecipeDTOResolver recipeDTOResolver;
+    private RecipeResolver recipeResolver;
 
     public RecipeDAOHibernateImpl() {
-        recipeDTOResolver = RecipeDTOResolver.getInstance();
+        recipeResolver = RecipeResolver.getInstance();
     }
 
     @Override
-    public void create(Recipe recipe) throws DAOEntityCreationException {
+    public void create(RecipeDTO recipe) throws DAOEntityCreationException {
         try {
+            Recipe recipeEntity = recipeResolver.resolveToEntity(recipe);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.persist(recipe);
+            entityManager.persist(recipeEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityCreationException(e.getMessage());
@@ -45,7 +46,7 @@ public class RecipeDAOHibernateImpl implements RecipeDAO {
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
             Recipe recipe = entityManager.find(Recipe.class, id);
-            recipeDto = recipeDTOResolver.resolve(recipe);
+            recipeDto = recipeResolver.resolveToDTO(recipe);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityReadingException(e.getMessage());
@@ -56,11 +57,12 @@ public class RecipeDAOHibernateImpl implements RecipeDAO {
     }
 
     @Override
-    public void update(Recipe recipe) throws DAOEntityUpdatingException {
+    public void update(RecipeDTO recipe) throws DAOEntityUpdatingException {
         try {
+            Recipe recipeEntity = recipeResolver.resolveToEntity(recipe);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.merge(recipe);
+            entityManager.merge(recipeEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityUpdatingException(e.getMessage());
@@ -70,11 +72,12 @@ public class RecipeDAOHibernateImpl implements RecipeDAO {
     }
 
     @Override
-    public void delete(Recipe recipe) throws DAOEntityDeletingException {
+    public void delete(RecipeDTO recipe) throws DAOEntityDeletingException {
         try {
+            Recipe recipeEntity = recipeResolver.resolveToEntity(recipe);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.remove(recipe);
+            entityManager.remove(recipeEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityDeletingException(e.getMessage());
@@ -89,8 +92,8 @@ public class RecipeDAOHibernateImpl implements RecipeDAO {
         try {
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            for (Recipe r : entityManager.createQuery("SELECT r FROM Recipe r", Recipe.class).getResultList()) {
-                list.add(recipeDTOResolver.resolve(r));
+            for (Recipe recipe : entityManager.createQuery("SELECT r FROM Recipe r", Recipe.class).getResultList()) {
+                list.add(recipeResolver.resolveToDTO(recipe));
             }
             entityManager.getTransaction().commit();
         } catch (Exception e) {

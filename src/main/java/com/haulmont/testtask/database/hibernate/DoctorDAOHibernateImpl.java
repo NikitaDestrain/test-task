@@ -1,7 +1,7 @@
 package com.haulmont.testtask.database.hibernate;
 
 import com.haulmont.testtask.database.interfaces.DoctorDAO;
-import com.haulmont.testtask.database.utils.dto.DoctorDTOResolver;
+import com.haulmont.testtask.database.utils.dto.DoctorResolver;
 import com.haulmont.testtask.database.utils.hibernate.HibernateUtil;
 import com.haulmont.testtask.domain.dto.DoctorDTO;
 import com.haulmont.testtask.domain.entity.Doctor;
@@ -18,18 +18,19 @@ import java.util.List;
 public class DoctorDAOHibernateImpl implements DoctorDAO {
 
     private EntityManager entityManager;
-    private DoctorDTOResolver doctorDTOResolver;
+    private DoctorResolver doctorResolver;
 
     public DoctorDAOHibernateImpl() {
-        doctorDTOResolver = DoctorDTOResolver.getInstance();
+        doctorResolver = DoctorResolver.getInstance();
     }
 
     @Override
-    public void create(Doctor doctor) throws DAOEntityCreationException {
+    public void create(DoctorDTO doctor) throws DAOEntityCreationException {
         try {
+            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.persist(doctor);
+            entityManager.persist(doctorEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityCreationException(e.getMessage());
@@ -45,7 +46,7 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
             Doctor doctor = entityManager.find(Doctor.class, id);
-            doctorDto = doctorDTOResolver.resolve(doctor);
+            doctorDto = doctorResolver.resolveToDTO(doctor);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityReadingException(e.getMessage());
@@ -56,11 +57,12 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     }
 
     @Override
-    public void update(Doctor doctor) throws DAOEntityUpdatingException {
+    public void update(DoctorDTO doctor) throws DAOEntityUpdatingException {
         try {
+            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.merge(doctor);
+            entityManager.merge(doctorEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityUpdatingException(e.getMessage());
@@ -70,11 +72,12 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     }
 
     @Override
-    public void delete(Doctor doctor) throws DAOEntityDeletingException {
+    public void delete(DoctorDTO doctor) throws DAOEntityDeletingException {
         try {
+            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.remove(doctor);
+            entityManager.remove(doctorEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityDeletingException(e.getMessage());
@@ -89,8 +92,8 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
         try {
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            for (Doctor d : entityManager.createQuery("SELECT d FROM Doctor d", Doctor.class).getResultList()) {
-                list.add(doctorDTOResolver.resolve(d));
+            for (Doctor doctor : entityManager.createQuery("SELECT d FROM Doctor d", Doctor.class).getResultList()) {
+                list.add(doctorResolver.resolveToDTO(doctor));
             }
             entityManager.getTransaction().commit();
         } catch (Exception e) {

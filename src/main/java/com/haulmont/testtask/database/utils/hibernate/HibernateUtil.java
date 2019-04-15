@@ -1,22 +1,23 @@
 package com.haulmont.testtask.database.utils.hibernate;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public class HibernateUtil {
 
-    private static EntityManager entityManager;
+    private static EntityManagerFactory entityManagerFactory;
 
-    private static EntityManager createEntityManager() throws ExceptionInInitializerError {
+    private static EntityManagerFactory createEntityManagerFactory() throws ExceptionInInitializerError {
         try {
-            return Persistence.createEntityManagerFactory(HibernateUtilConstants.PERSISTENT_UNIT_NAME).createEntityManager();
+            return Persistence.createEntityManagerFactory(HibernateUtilConstants.PERSISTENT_UNIT_NAME);
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }
     }
 
     public static EntityManager getEntityManager() {
-        if (entityManager == null) entityManager = createEntityManager();
-        return entityManager;
+        if (entityManagerFactory == null) entityManagerFactory = createEntityManagerFactory();
+        return entityManagerFactory.createEntityManager();
     }
 }
