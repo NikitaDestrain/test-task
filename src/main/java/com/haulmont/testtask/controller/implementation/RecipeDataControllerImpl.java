@@ -5,8 +5,10 @@ import com.haulmont.testtask.database.interfaces.RecipeDAO;
 import com.haulmont.testtask.domain.dto.RecipeDTO;
 import com.haulmont.testtask.exception.controller.DataControllerCreationException;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
+import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.controller.DataControllerUpdatingException;
 import com.haulmont.testtask.exception.database.DAOEntityCreationException;
+import com.haulmont.testtask.exception.database.DAOEntityDeletingException;
 import com.haulmont.testtask.exception.database.DAOEntityReadingException;
 import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 
@@ -48,16 +50,21 @@ public class RecipeDataControllerImpl implements RecipeDataController {
     }
 
     @Override
+    public void remove(Long id) throws DataControllerRemovingException {
+        try {
+            RecipeDTO recipe = recipeDAO.read(id);
+            recipeDAO.delete(recipe);
+        } catch (DAOEntityDeletingException | DAOEntityReadingException e) {
+            throw new DataControllerRemovingException(e.getMessage());
+        }
+    }
+
+    @Override
     public List<RecipeDTO> getAll() throws DataControllerReadingException {
         try {
             return recipeDAO.getAll();
         } catch (DAOEntityReadingException e) {
             throw new DataControllerReadingException(e.getMessage());
         }
-    }
-
-    @Override
-    public List<RecipeDTO> getFilteredByRegex(String regex, String parameter) throws DataControllerReadingException {
-        return null;
     }
 }

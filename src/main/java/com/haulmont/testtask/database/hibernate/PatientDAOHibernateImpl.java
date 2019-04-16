@@ -77,7 +77,9 @@ public class PatientDAOHibernateImpl implements PatientDAO {
             Patient patientEntity = patientResolver.resolveToEntity(patient);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.remove(patientEntity);
+            entityManager.remove(
+                    entityManager.contains(patientEntity) ? patientEntity : entityManager.merge(patientEntity)
+            );
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityDeletingException(e.getMessage());

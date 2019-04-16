@@ -9,17 +9,16 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @Theme(ValoTheme.THEME_NAME)
 public class HomeView extends HorizontalLayout implements View {
+
     public HomeView() {
         create();
     }
 
     private void create() {
-        addComponent(new Label("home"));
-
+        addComponent(new Label("Hello world!"));
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-
     }
 }

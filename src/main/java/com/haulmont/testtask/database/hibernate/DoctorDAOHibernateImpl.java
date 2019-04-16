@@ -27,7 +27,7 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     @Override
     public void create(DoctorDTO doctor) throws DAOEntityCreationException {
         try {
-            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
+            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor, null);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
             entityManager.persist(doctorEntity);
@@ -59,9 +59,10 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     @Override
     public void update(DoctorDTO doctor) throws DAOEntityUpdatingException {
         try {
-            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
+            Doctor doctorEntity = entityManager.find(Doctor.class, doctor.getId());
+            doctorEntity = doctorResolver.resolveToEntity(doctor, doctorEntity);
             entityManager.merge(doctorEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -74,10 +75,11 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     @Override
     public void delete(DoctorDTO doctor) throws DAOEntityDeletingException {
         try {
-            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.remove(doctorEntity);
+            Doctor doctorEntity = entityManager.find(Doctor.class, doctor.getId());
+            doctorEntity = doctorResolver.resolveToEntity(doctor, doctorEntity);
+            entityManager.remove(entityManager.contains(doctorEntity) ? doctorEntity : entityManager.merge(doctorEntity));
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityDeletingException(e.getMessage());
@@ -116,8 +118,8 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     }
 
     private void finishSession() {
-        if (entityManager != null && entityManager.isOpen()) {
+        /*if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
-        }
+        }*/
     }
 }

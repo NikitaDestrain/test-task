@@ -77,7 +77,9 @@ public class RecipeDAOHibernateImpl implements RecipeDAO {
             Recipe recipeEntity = recipeResolver.resolveToEntity(recipe);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
-            entityManager.remove(recipeEntity);
+            entityManager.remove(
+                    entityManager.contains(recipeEntity) ? recipeEntity : entityManager.merge(recipeEntity)
+            );
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOEntityDeletingException(e.getMessage());

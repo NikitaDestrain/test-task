@@ -3,6 +3,7 @@ package com.haulmont.testtask.controller.interfaces;
 import com.haulmont.testtask.domain.dto.RecipeDTO;
 import com.haulmont.testtask.exception.controller.DataControllerCreationException;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
+import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.controller.DataControllerUpdatingException;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface RecipeDataController {
 
     void update(RecipeDTO recipe) throws DataControllerUpdatingException;
 
-    List<RecipeDTO> getAll() throws DataControllerReadingException;
+    void remove(Long id) throws DataControllerRemovingException;
 
-    List<RecipeDTO> getFilteredByRegex(String regex, String parameter) throws DataControllerReadingException;
+    List<RecipeDTO> getAll() throws DataControllerReadingException;
 }

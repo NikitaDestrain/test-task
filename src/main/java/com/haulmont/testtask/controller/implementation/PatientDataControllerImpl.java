@@ -5,8 +5,10 @@ import com.haulmont.testtask.database.interfaces.PatientDAO;
 import com.haulmont.testtask.domain.dto.PatientDTO;
 import com.haulmont.testtask.exception.controller.DataControllerCreationException;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
+import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.controller.DataControllerUpdatingException;
 import com.haulmont.testtask.exception.database.DAOEntityCreationException;
+import com.haulmont.testtask.exception.database.DAOEntityDeletingException;
 import com.haulmont.testtask.exception.database.DAOEntityReadingException;
 import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 
@@ -44,6 +46,16 @@ public class PatientDataControllerImpl implements PatientDataController {
             patientDAO.update(patient);
         } catch (DAOEntityUpdatingException e) {
             throw new DataControllerUpdatingException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void remove(Long id) throws DataControllerRemovingException {
+        try {
+            PatientDTO patient = patientDAO.read(id);
+            patientDAO.delete(patient);
+        } catch (DAOEntityDeletingException | DAOEntityReadingException e) {
+            throw new DataControllerRemovingException(e.getMessage());
         }
     }
 

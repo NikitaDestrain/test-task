@@ -35,13 +35,21 @@ public class DoctorResolver {
         );
     }
 
-    public Doctor resolveToEntity(DoctorDTO doctor) {
-        return DoctorFactory.create(
-                doctor.getId(),
-                doctor.getName(),
-                doctor.getSurname(),
-                doctor.getPatronymic(),
-                doctor.getSpecialization()
-        );
+    public Doctor resolveToEntity(DoctorDTO doctor, Doctor currentDoctor) {
+        if (currentDoctor != null) {
+            currentDoctor.setName(doctor.getName());
+            currentDoctor.setSurname(doctor.getSurname());
+            currentDoctor.setPatronymic(doctor.getPatronymic());
+            currentDoctor.setSpecialization(doctor.getSpecialization());
+            return currentDoctor;
+        } else {
+            return DoctorFactory.create(
+                    doctor.getId(),
+                    doctor.getName(),
+                    doctor.getSurname(),
+                    doctor.getPatronymic(),
+                    doctor.getSpecialization()
+            );
+        }
     }
 }

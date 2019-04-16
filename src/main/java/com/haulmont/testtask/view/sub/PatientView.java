@@ -1,43 +1,38 @@
 package com.haulmont.testtask.view.sub;
 
-import com.haulmont.testtask.controller.interfaces.DoctorDataController;
-import com.haulmont.testtask.domain.dto.DoctorDTO;
+import com.haulmont.testtask.controller.interfaces.PatientDataController;
+import com.haulmont.testtask.domain.dto.PatientDTO;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
-import com.haulmont.testtask.view.sub.modal.manipulation.DoctorModalWindow;
-import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
-@Theme(ValoTheme.THEME_NAME)
-public class DoctorView extends VerticalLayout implements View {
+public class PatientView extends VerticalLayout implements View {
 
     public static final String TABLE_NAME_COLUMN = "name";
     public static final String TABLE_SURNAME_COLUMN = "surname";
     public static final String TABLE_PATRONYMIC_COLUMN = "patronymic";
-    public static final String TABLE_SPECIALIZATION_COLUMN = "specialization";
+    public static final String TABLE_PHONE_NUMBER_COLUMN = "phoneNumber";
 
     public static final String TABLE_NAME_HEADER = "Name";
     public static final String TABLE_SURNAME_HEADER = "Surname";
     public static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
-    public static final String TABLE_SPECIALIZATION_HEADER = "Specialization";
+    public static final String TABLE_PHONE_NUMBER_HEADER = "Phone number";
 
-    private Table doctorTable;
+    private Table patientTable;
     private MenuBar menuBar;
     private MenuBar.MenuItem addItem;
     private MenuBar.MenuItem editItem;
     private MenuBar.MenuItem deleteItem;
-    private MenuBar.MenuItem statisticItem;
 
-    private DoctorDataController dataController;
+    private PatientDataController dataController;
 
-    public DoctorView(DoctorDataController doctorDataController) {
-        this.dataController = doctorDataController;
+    public PatientView(PatientDataController patientDataController) {
+        this.dataController = patientDataController;
         initMenuBar();
         initTable();
         createFrame();
@@ -47,7 +42,7 @@ public class DoctorView extends VerticalLayout implements View {
         menuBar = new MenuBar();
         addItem = menuBar.addItem("Add", new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                DoctorModalWindow dMW = new DoctorModalWindow(dataController);
+                /*DoctorModalWindow dMW = new DoctorModalWindow(dataController);
                 dMW.addCloseListener(closeEvent -> {
                     try {
                         refreshTable();
@@ -59,16 +54,16 @@ public class DoctorView extends VerticalLayout implements View {
                         );
                     }
                 });
-                getUI().addWindow(dMW);
+                getUI().addWindow(dMW);*/
             }
         });
         editItem = menuBar.addItem("Edit", new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Object tableValue = doctorTable.getValue();
+                /*Object tableValue = patientTable.getValue();
                 if (tableValue != null) {
                     DoctorModalWindow dMW = new DoctorModalWindow(
                             (Long) tableValue,
-                            doctorTable.getItem(tableValue),
+                            patientTable.getItem(tableValue),
                             dataController);
                     dMW.addCloseListener(closeEvent -> {
                         try {
@@ -81,12 +76,12 @@ public class DoctorView extends VerticalLayout implements View {
                         }
                     });
                     getUI().addWindow(dMW);
-                }
+                }*/
             }
         });
         deleteItem = menuBar.addItem("Delete", new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Object tableValue = doctorTable.getValue();
+                Object tableValue = patientTable.getValue();
                 if (tableValue != null) {
                     try {
                         dataController.remove((Long) tableValue);
@@ -109,22 +104,17 @@ public class DoctorView extends VerticalLayout implements View {
                 }
             }
         });
-        statisticItem = menuBar.addItem("Show Statistic", new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-
-            }
-        });
     }
 
     private void createFrame() {
         setMargin(true);
-        addComponents(menuBar, doctorTable);
+        addComponents(menuBar, patientTable);
         setComponentAlignment(menuBar, Alignment.MIDDLE_CENTER);
     }
 
     private void initTable() {
-        doctorTable = new Table();
-        doctorTable.addContainerProperty(
+        patientTable = new Table();
+        patientTable.addContainerProperty(
                 TABLE_NAME_COLUMN,
                 String.class,
                 null,
@@ -132,7 +122,7 @@ public class DoctorView extends VerticalLayout implements View {
                 null,
                 Table.Align.CENTER
         );
-        doctorTable.addContainerProperty(
+        patientTable.addContainerProperty(
                 TABLE_SURNAME_COLUMN,
                 String.class,
                 null,
@@ -140,7 +130,7 @@ public class DoctorView extends VerticalLayout implements View {
                 null,
                 Table.Align.CENTER
         );
-        doctorTable.addContainerProperty(
+        patientTable.addContainerProperty(
                 TABLE_PATRONYMIC_COLUMN,
                 String.class,
                 null,
@@ -148,37 +138,37 @@ public class DoctorView extends VerticalLayout implements View {
                 null,
                 Table.Align.CENTER
         );
-        doctorTable.addContainerProperty(
-                TABLE_SPECIALIZATION_COLUMN,
+        patientTable.addContainerProperty(
+                TABLE_PHONE_NUMBER_COLUMN,
                 String.class,
                 null,
-                TABLE_SPECIALIZATION_HEADER,
+                TABLE_PHONE_NUMBER_HEADER,
                 null,
                 Table.Align.CENTER
         );
-        doctorTable.setSelectable(true);
-        doctorTable.setImmediate(true);
-        doctorTable.setNullSelectionAllowed(false);
-        doctorTable.setSizeFull();
+        patientTable.setSelectable(true);
+        patientTable.setImmediate(true);
+        patientTable.setNullSelectionAllowed(false);
+        patientTable.setSizeFull();
     }
 
     private void refreshTable() throws RefreshTableException {
-        doctorTable.removeAllItems();
+        patientTable.removeAllItems();
         try {
-            List<DoctorDTO> doctors = dataController.getAll();
-            for (DoctorDTO doctor : doctors) {
-                doctorTable.addItem(new Object[]{
-                        doctor.getName(),
-                        doctor.getSurname(),
-                        doctor.getPatronymic(),
-                        doctor.getSpecialization()
-                }, doctor.getId());
+            List<PatientDTO> patients = dataController.getAll();
+            for (PatientDTO patient : patients) {
+                patientTable.addItem(new Object[]{
+                        patient.getName(),
+                        patient.getSurname(),
+                        patient.getPatronymic(),
+                        patient.getPhoneNumber()
+                }, patient.getId());
             }
         } catch (DataControllerReadingException e) {
             throw new RefreshTableException(e.getMessage());
         }
 
-        doctorTable.addItemClickListener(event -> {
+        patientTable.addItemClickListener(event -> {
             if (event.getItem() != null) {
                 enableButtons();
             } else {
@@ -187,13 +177,13 @@ public class DoctorView extends VerticalLayout implements View {
         });
 
         // fixme open too much windows
-        doctorTable.addItemClickListener(event -> {
-            if (event.isDoubleClick()) {
-                Object tableValue = doctorTable.getValue();
+        patientTable.addItemClickListener(event -> {
+            /*if (event.isDoubleClick()) {
+                Object tableValue = patientTable.getValue();
                 if (tableValue != null) {
                     DoctorModalWindow dMW = new DoctorModalWindow(
                             (Long) tableValue,
-                            doctorTable.getItem(tableValue),
+                            patientTable.getItem(tableValue),
                             dataController);
                     dMW.addCloseListener(closeEvent -> {
                         try {
@@ -207,7 +197,7 @@ public class DoctorView extends VerticalLayout implements View {
                     });
                     getUI().addWindow(dMW);
                 }
-            }
+            }*/
         });
         disableButtons();
     }
@@ -215,13 +205,11 @@ public class DoctorView extends VerticalLayout implements View {
     private void enableButtons() {
         editItem.setEnabled(true);
         deleteItem.setEnabled(true);
-        statisticItem.setEnabled(true);
     }
 
     private void disableButtons() {
         editItem.setEnabled(false);
         deleteItem.setEnabled(false);
-        statisticItem.setEnabled(false);
     }
 
     @Override
