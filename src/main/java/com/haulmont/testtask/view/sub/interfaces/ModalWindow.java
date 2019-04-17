@@ -4,6 +4,11 @@ import com.vaadin.ui.*;
 
 public abstract class ModalWindow<T> extends Window {
 
+    private static final String WINDOW_WIDTH = "35%";
+    private static final String WINDOW_HEIGHT = "70%";
+    private static final String SUBMIT_BUTTON_TEXT = "Submit";
+    private static final String CANCEL_BUTTON_TEXT = "Cancel";
+
     protected Button submitButton;
     protected Button cancelButton;
     protected HorizontalLayout buttonLayout;
@@ -13,8 +18,8 @@ public abstract class ModalWindow<T> extends Window {
 
     public ModalWindow() {
         setModal(true);
-        setWidth("35%");
-        setHeight("70%");
+        setWidth(WINDOW_WIDTH);
+        setHeight(WINDOW_HEIGHT);
         setResizable(false);
         setDraggable(false);
 
@@ -28,8 +33,9 @@ public abstract class ModalWindow<T> extends Window {
         formLayout.setMargin(false);
         formLayout.setSpacing(true);
 
-        submitButton = new Button("Submit");
-        cancelButton = new Button("Cancel");
+        submitButton = new Button(SUBMIT_BUTTON_TEXT);
+        submitButton.setEnabled(false);
+        cancelButton = new Button(CANCEL_BUTTON_TEXT);
         cancelButton.addClickListener(clickEvent -> close());
 
         buttonLayout = new HorizontalLayout();

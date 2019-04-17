@@ -46,7 +46,7 @@ public class RecipeResolver {
                 recipe.getId(),
                 recipe.getDescription(),
                 patientResolver.resolveToEntity(recipe.getPatient()),
-                doctorResolver.resolveToEntity(recipe.getDoctor(), null),
+                doctorResolver.resolveToEntity(recipe.getDoctor()),
                 recipe.getCreationDate(),
                 recipe.getExpirationDate(),
                 recipe.getPriority()

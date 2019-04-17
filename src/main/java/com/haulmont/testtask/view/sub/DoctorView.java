@@ -22,10 +22,15 @@ public class DoctorView extends VerticalLayout implements View {
     public static final String TABLE_PATRONYMIC_COLUMN = "patronymic";
     public static final String TABLE_SPECIALIZATION_COLUMN = "specialization";
 
-    public static final String TABLE_NAME_HEADER = "Name";
-    public static final String TABLE_SURNAME_HEADER = "Surname";
-    public static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
-    public static final String TABLE_SPECIALIZATION_HEADER = "Specialization";
+    private static final String TABLE_NAME_HEADER = "Name";
+    private static final String TABLE_SURNAME_HEADER = "Surname";
+    private static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
+    private static final String TABLE_SPECIALIZATION_HEADER = "Specialization";
+
+    private static final String ADD_BUTTON_TEXT = "Add";
+    private static final String EDIT_BUTTON_TEXT = "Edit";
+    private static final String DELETE_BUTTON_TEXT = "Delete";
+    private static final String STATISTIC_BUTTON_TEXT = "Show Statistic";
 
     private Table doctorTable;
     private MenuBar menuBar;
@@ -45,7 +50,7 @@ public class DoctorView extends VerticalLayout implements View {
 
     private void initMenuBar() {
         menuBar = new MenuBar();
-        addItem = menuBar.addItem("Add", new MenuBar.Command() {
+        addItem = menuBar.addItem(ADD_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 DoctorModalWindow dMW = new DoctorModalWindow(dataController);
                 dMW.addCloseListener(closeEvent -> {
@@ -62,7 +67,7 @@ public class DoctorView extends VerticalLayout implements View {
                 getUI().addWindow(dMW);
             }
         });
-        editItem = menuBar.addItem("Edit", new MenuBar.Command() {
+        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Object tableValue = doctorTable.getValue();
                 if (tableValue != null) {
@@ -84,7 +89,7 @@ public class DoctorView extends VerticalLayout implements View {
                 }
             }
         });
-        deleteItem = menuBar.addItem("Delete", new MenuBar.Command() {
+        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Object tableValue = doctorTable.getValue();
                 if (tableValue != null) {
@@ -109,7 +114,7 @@ public class DoctorView extends VerticalLayout implements View {
                 }
             }
         });
-        statisticItem = menuBar.addItem("Show Statistic", new MenuBar.Command() {
+        statisticItem = menuBar.addItem(STATISTIC_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
 
             }
@@ -183,30 +188,6 @@ public class DoctorView extends VerticalLayout implements View {
                 enableButtons();
             } else {
                 disableButtons();
-            }
-        });
-
-        // fixme open too much windows
-        doctorTable.addItemClickListener(event -> {
-            if (event.isDoubleClick()) {
-                Object tableValue = doctorTable.getValue();
-                if (tableValue != null) {
-                    DoctorModalWindow dMW = new DoctorModalWindow(
-                            (Long) tableValue,
-                            doctorTable.getItem(tableValue),
-                            dataController);
-                    dMW.addCloseListener(closeEvent -> {
-                        try {
-                            refreshTable();
-                        } catch (RefreshTableException e) {
-                            Notification.show(
-                                    "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                    Notification.Type.ERROR_MESSAGE
-                            );
-                        }
-                    });
-                    getUI().addWindow(dMW);
-                }
             }
         });
         disableButtons();

@@ -1,13 +1,13 @@
 package com.haulmont.testtask.view.sub.modal.manipulation;
 
 import com.haulmont.testtask.controller.interfaces.DoctorDataController;
-import com.haulmont.testtask.domain.dto.DoctorDTO;
+import com.haulmont.testtask.controller.interfaces.PatientDataController;
+import com.haulmont.testtask.domain.dto.PatientDTO;
 import com.haulmont.testtask.exception.controller.DataControllerCreationException;
 import com.haulmont.testtask.exception.controller.DataControllerUpdatingException;
-import com.haulmont.testtask.factory.dto.DoctorDTOFactory;
-import com.haulmont.testtask.view.sub.DoctorView;
+import com.haulmont.testtask.factory.dto.PatientDTOFactory;
+import com.haulmont.testtask.view.sub.PatientView;
 import com.haulmont.testtask.view.sub.interfaces.ModalWindow;
-
 import com.haulmont.testtask.view.sub.interfaces.ModalWindowConstants;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
@@ -15,26 +15,26 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
-public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
+public class PatientModalWindow extends ModalWindow<PatientDTO> {
 
-    private static final String EDIT_DOCTOR = "Edit doctor";
-    private static final String ADD_DOCTOR = "Add doctor";
+    private static final String EDIT_PATIENT = "Edit patient";
+    private static final String ADD_PATIENT = "Add patient";
     private static final String FIELD_WIDTH = "100%";
 
     private TextField nameField;
     private TextField surnameField;
     private TextField patronymicField;
-    private TextField specializationField;
+    private TextField phoneNumberField;
 
-    public DoctorModalWindow(DoctorDataController dataController) {
+    public PatientModalWindow(PatientDataController dataController) {
         super();
-        setCaption(ADD_DOCTOR);
+        setCaption(ADD_PATIENT);
         createForm();
         submitButton.addClickListener(clickEvent -> {
             if (isDataValid()) {
-                DoctorDTO doctorDTO = convert();
+                PatientDTO patientDTO = convert();
                 try {
-                    dataController.create(doctorDTO);
+                    dataController.create(patientDTO);
                 } catch (DataControllerCreationException e) {
                     Notification.show(
                             "Oops!!!\n\nSomething went wrong :(\n\nPlease, try again",
@@ -46,14 +46,14 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
         });
     }
 
-    public DoctorModalWindow(Long id, Item item, DoctorDataController dataController) {
+    public PatientModalWindow(Long id, Item item, PatientDataController dataController) {
         super();
-        setCaption(EDIT_DOCTOR);
+        setCaption(EDIT_PATIENT);
         createForm();
-        nameField.setValue(String.valueOf(item.getItemProperty(DoctorView.TABLE_NAME_COLUMN).getValue()));
-        surnameField.setValue(String.valueOf(item.getItemProperty(DoctorView.TABLE_SURNAME_COLUMN).getValue()));
-        patronymicField.setValue(String.valueOf(item.getItemProperty(DoctorView.TABLE_PATRONYMIC_COLUMN).getValue()));
-        specializationField.setValue(String.valueOf(item.getItemProperty(DoctorView.TABLE_SPECIALIZATION_COLUMN).getValue()));
+        nameField.setValue(String.valueOf(item.getItemProperty(PatientView.TABLE_NAME_COLUMN).getValue()));
+        surnameField.setValue(String.valueOf(item.getItemProperty(PatientView.TABLE_SURNAME_COLUMN).getValue()));
+        patronymicField.setValue(String.valueOf(item.getItemProperty(PatientView.TABLE_PATRONYMIC_COLUMN).getValue()));
+        phoneNumberField.setValue(String.valueOf(item.getItemProperty(PatientView.TABLE_PHONE_NUMBER_COLUMN).getValue()));
 
         submitButton.addClickListener(clickEvent -> {
             if (isDataValid()) {
@@ -107,20 +107,20 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
                 "Patronymic must contain only letters")
         );
 
-        specializationField = new TextField("Specialization");
-        specializationField.setRequired(true);
-        specializationField.setWidth(FIELD_WIDTH);
-        specializationField.setRequiredError("Enter Specialization");
-        specializationField.setMaxLength(40);
-        specializationField.setImmediate(true);
-        specializationField.addValidator(new RegexpValidator(
-                ModalWindowConstants.LETTER_WITH_SPACE_REGEX,
+        phoneNumberField = new TextField("Phone nubmer");
+        phoneNumberField.setRequired(true);
+        phoneNumberField.setWidth(FIELD_WIDTH);
+        phoneNumberField.setRequiredError("Enter Phone Number");
+        phoneNumberField.setMaxLength(15);
+        phoneNumberField.setImmediate(true);
+        phoneNumberField.addValidator(new RegexpValidator(
+                ModalWindowConstants.NUMBER_REGEX,
                 false,
-                "Specialization must contain only letters (optional: with spaces)")
+                "Phone number must contain only numbers")
         );
 
         nameField.addBlurListener(event -> {
-            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && specializationField.isValid()) {
+            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && phoneNumberField.isValid()) {
                 submitButton.setEnabled(true);
             } else {
                 submitButton.setEnabled(false);
@@ -128,7 +128,7 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
         });
 
         surnameField.addBlurListener(event -> {
-            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && specializationField.isValid()) {
+            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && phoneNumberField.isValid()) {
                 submitButton.setEnabled(true);
             } else {
                 submitButton.setEnabled(false);
@@ -136,43 +136,43 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
         });
 
         patronymicField.addBlurListener(event -> {
-            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && specializationField.isValid()) {
+            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && phoneNumberField.isValid()) {
                 submitButton.setEnabled(true);
             } else {
                 submitButton.setEnabled(false);
             }
         });
 
-        specializationField.addBlurListener(event -> {
-            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && specializationField.isValid()) {
+        phoneNumberField.addBlurListener(event -> {
+            if (nameField.isValid() && surnameField.isValid() && patronymicField.isValid() && phoneNumberField.isValid()) {
                 submitButton.setEnabled(true);
             } else {
                 submitButton.setEnabled(false);
             }
         });
-
-        formLayout.addComponents(nameField, surnameField, patronymicField, specializationField);
+        
+        formLayout.addComponents(nameField, surnameField, patronymicField, phoneNumberField);
         setContent(mainLayout);
     }
 
     @Override
-    protected DoctorDTO convert() {
-        return DoctorDTOFactory.create(
+    protected PatientDTO convert() {
+        return PatientDTOFactory.create(
                 nameField.getValue(),
                 surnameField.getValue(),
                 patronymicField.getValue(),
-                specializationField.getValue()
+                phoneNumberField.getValue()
         );
     }
 
     @Override
-    protected DoctorDTO convert(Long id) {
-        return DoctorDTOFactory.create(
+    protected PatientDTO convert(Long id) {
+        return PatientDTOFactory.create(
                 id,
                 nameField.getValue(),
                 surnameField.getValue(),
                 patronymicField.getValue(),
-                specializationField.getValue()
+                phoneNumberField.getValue()
         );
     }
 
@@ -182,7 +182,7 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
             nameField.validate();
             surnameField.validate();
             patronymicField.validate();
-            specializationField.validate();
+            phoneNumberField.validate();
         } catch (Validator.InvalidValueException e) {
             Notification.show(
                     "Incorrect input data :(\n\nClick me and try again",

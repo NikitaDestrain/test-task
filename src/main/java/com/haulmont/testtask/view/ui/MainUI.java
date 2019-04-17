@@ -20,11 +20,11 @@ public class MainUI extends UI {
     private static final String PAGE_TITLE = "Hospital Recipe System";
 
     private static final String HEADER_WIDTH = "100%";
-    private static final int HEADER_EXPAND_RATIO = 5;
+    private static final int HEADER_EXPAND_RATIO = 1;
 
     private static final String SHOW_LAYOUT_WIDTH = "100%";
     private static final String SHOW_LAYOUT_HEIGHT = "100%";
-    private static final int SHOW_LAYOUT_EXPAND_RATIO = 5;
+    private static final int SHOW_LAYOUT_EXPAND_RATIO = 9;
 
     private static final String MAIN_LAYOUT_WIDTH = "100%";
 

@@ -5,6 +5,7 @@ import com.haulmont.testtask.domain.dto.PatientDTO;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
+import com.haulmont.testtask.view.sub.modal.manipulation.PatientModalWindow;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -18,10 +19,14 @@ public class PatientView extends VerticalLayout implements View {
     public static final String TABLE_PATRONYMIC_COLUMN = "patronymic";
     public static final String TABLE_PHONE_NUMBER_COLUMN = "phoneNumber";
 
-    public static final String TABLE_NAME_HEADER = "Name";
-    public static final String TABLE_SURNAME_HEADER = "Surname";
-    public static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
-    public static final String TABLE_PHONE_NUMBER_HEADER = "Phone number";
+    private static final String TABLE_NAME_HEADER = "Name";
+    private static final String TABLE_SURNAME_HEADER = "Surname";
+    private static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
+    private static final String TABLE_PHONE_NUMBER_HEADER = "Phone number";
+
+    private static final String ADD_BUTTON_TEXT = "Add";
+    private static final String EDIT_BUTTON_TEXT = "Edit";
+    private static final String DELETE_BUTTON_TEXT = "Delete";
 
     private Table patientTable;
     private MenuBar menuBar;
@@ -40,10 +45,10 @@ public class PatientView extends VerticalLayout implements View {
 
     private void initMenuBar() {
         menuBar = new MenuBar();
-        addItem = menuBar.addItem("Add", new MenuBar.Command() {
+        addItem = menuBar.addItem(ADD_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                /*DoctorModalWindow dMW = new DoctorModalWindow(dataController);
-                dMW.addCloseListener(closeEvent -> {
+                PatientModalWindow pMW = new PatientModalWindow(dataController);
+                pMW.addCloseListener(closeEvent -> {
                     try {
                         refreshTable();
                     } catch (RefreshTableException e) {
@@ -54,18 +59,18 @@ public class PatientView extends VerticalLayout implements View {
                         );
                     }
                 });
-                getUI().addWindow(dMW);*/
+                getUI().addWindow(pMW);
             }
         });
-        editItem = menuBar.addItem("Edit", new MenuBar.Command() {
+        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                /*Object tableValue = patientTable.getValue();
+                Object tableValue = patientTable.getValue();
                 if (tableValue != null) {
-                    DoctorModalWindow dMW = new DoctorModalWindow(
+                    PatientModalWindow pMW = new PatientModalWindow(
                             (Long) tableValue,
                             patientTable.getItem(tableValue),
                             dataController);
-                    dMW.addCloseListener(closeEvent -> {
+                    pMW.addCloseListener(closeEvent -> {
                         try {
                             refreshTable();
                         } catch (RefreshTableException e) {
@@ -75,11 +80,11 @@ public class PatientView extends VerticalLayout implements View {
                             );
                         }
                     });
-                    getUI().addWindow(dMW);
-                }*/
+                    getUI().addWindow(pMW);
+                }
             }
         });
-        deleteItem = menuBar.addItem("Delete", new MenuBar.Command() {
+        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Object tableValue = patientTable.getValue();
                 if (tableValue != null) {
@@ -88,7 +93,7 @@ public class PatientView extends VerticalLayout implements View {
                     } catch (DataControllerRemovingException e) {
                         Notification.show(
                                 "Oops!!!\n\nSomething went wrong :(" +
-                                        "\n\nPlease, make sure the doctor has no recipes" +
+                                        "\n\nPlease, make sure the petient has no recipes" +
                                         "\n\nClick me and try again",
                                 Notification.Type.ERROR_MESSAGE
                         );
@@ -174,30 +179,6 @@ public class PatientView extends VerticalLayout implements View {
             } else {
                 disableButtons();
             }
-        });
-
-        // fixme open too much windows
-        patientTable.addItemClickListener(event -> {
-            /*if (event.isDoubleClick()) {
-                Object tableValue = patientTable.getValue();
-                if (tableValue != null) {
-                    DoctorModalWindow dMW = new DoctorModalWindow(
-                            (Long) tableValue,
-                            patientTable.getItem(tableValue),
-                            dataController);
-                    dMW.addCloseListener(closeEvent -> {
-                        try {
-                            refreshTable();
-                        } catch (RefreshTableException e) {
-                            Notification.show(
-                                    "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                    Notification.Type.ERROR_MESSAGE
-                            );
-                        }
-                    });
-                    getUI().addWindow(dMW);
-                }
-            }*/
         });
         disableButtons();
     }

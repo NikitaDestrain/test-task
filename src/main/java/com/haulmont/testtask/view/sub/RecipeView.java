@@ -1,17 +1,26 @@
 package com.haulmont.testtask.view.sub;
 
-import com.haulmont.testtask.controller.interfaces.PatientDataController;
 import com.haulmont.testtask.controller.interfaces.RecipeDataController;
+import com.haulmont.testtask.domain.auxiliary.Priority;
+import com.haulmont.testtask.domain.dto.DoctorDTO;
 import com.haulmont.testtask.domain.dto.PatientDTO;
 import com.haulmont.testtask.domain.dto.RecipeDTO;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
+import com.haulmont.testtask.view.utils.DoctorToStringConverter;
+import com.haulmont.testtask.view.utils.PatientToStringConverter;
+import com.haulmont.testtask.view.utils.PriorityToStringConverter;
+import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class RecipeView extends VerticalLayout implements View {
 
@@ -22,12 +31,16 @@ public class RecipeView extends VerticalLayout implements View {
     public static final String TABLE_EXPIRATION_DATE_COLUMN = "expirationDate";
     public static final String TABLE_PRIORITY_COLUMN = "priority";
 
-    public static final String TABLE_DESCRIPTION_HEADER = "Description";
-    public static final String TABLE_PATIENT_HEADER = "Patient";
-    public static final String TABLE_DOCTOR_HEADER = "Doctor";
-    public static final String TABLE_CREATION_DATE_HEADER = "Creation Date";
-    public static final String TABLE_EXPIRATION_DATE_HEADER = "Expiration Date";
-    public static final String TABLE_PRIORITY_HEADER = "Priority";
+    private static final String TABLE_DESCRIPTION_HEADER = "Description";
+    private static final String TABLE_PATIENT_HEADER = "Patient";
+    private static final String TABLE_DOCTOR_HEADER = "Doctor";
+    private static final String TABLE_CREATION_DATE_HEADER = "Creation Date";
+    private static final String TABLE_EXPIRATION_DATE_HEADER = "Expiration Date";
+    private static final String TABLE_PRIORITY_HEADER = "Priority";
+
+    private static final String ADD_BUTTON_TEXT = "Add";
+    private static final String EDIT_BUTTON_TEXT = "Edit";
+    private static final String DELETE_BUTTON_TEXT = "Delete";
 
     private Table recipeTable;
     private MenuBar menuBar;
@@ -46,7 +59,7 @@ public class RecipeView extends VerticalLayout implements View {
 
     private void initMenuBar() {
         menuBar = new MenuBar();
-        addItem = menuBar.addItem("Add", new MenuBar.Command() {
+        addItem = menuBar.addItem(ADD_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 /*DoctorModalWindow dMW = new DoctorModalWindow(dataController);
                 dMW.addCloseListener(closeEvent -> {
@@ -63,7 +76,7 @@ public class RecipeView extends VerticalLayout implements View {
                 getUI().addWindow(dMW);*/
             }
         });
-        editItem = menuBar.addItem("Edit", new MenuBar.Command() {
+        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 /*Object tableValue = recipeTable.getValue();
                 if (tableValue != null) {
@@ -85,7 +98,7 @@ public class RecipeView extends VerticalLayout implements View {
                 }*/
             }
         });
-        deleteItem = menuBar.addItem("Delete", new MenuBar.Command() {
+        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Object tableValue = recipeTable.getValue();
                 if (tableValue != null) {
@@ -94,7 +107,6 @@ public class RecipeView extends VerticalLayout implements View {
                     } catch (DataControllerRemovingException e) {
                         Notification.show(
                                 "Oops!!!\n\nSomething went wrong :(" +
-                                        "\n\nPlease, make sure the doctor has no recipes" +
                                         "\n\nClick me and try again",
                                 Notification.Type.ERROR_MESSAGE
                         );
@@ -130,7 +142,7 @@ public class RecipeView extends VerticalLayout implements View {
         );
         recipeTable.addContainerProperty(
                 TABLE_PATIENT_COLUMN,
-                String.class,
+                PatientDTO.class,
                 null,
                 TABLE_PATIENT_HEADER,
                 null,
@@ -138,7 +150,7 @@ public class RecipeView extends VerticalLayout implements View {
         );
         recipeTable.addContainerProperty(
                 TABLE_DOCTOR_COLUMN,
-                String.class,
+                DoctorDTO.class,
                 null,
                 TABLE_DOCTOR_HEADER,
                 null,
@@ -146,7 +158,7 @@ public class RecipeView extends VerticalLayout implements View {
         );
         recipeTable.addContainerProperty(
                 TABLE_CREATION_DATE_COLUMN,
-                String.class,
+                Date.class,
                 null,
                 TABLE_CREATION_DATE_HEADER,
                 null,
@@ -154,7 +166,7 @@ public class RecipeView extends VerticalLayout implements View {
         );
         recipeTable.addContainerProperty(
                 TABLE_EXPIRATION_DATE_COLUMN,
-                String.class,
+                Date.class,
                 null,
                 TABLE_EXPIRATION_DATE_HEADER,
                 null,
@@ -162,12 +174,36 @@ public class RecipeView extends VerticalLayout implements View {
         );
         recipeTable.addContainerProperty(
                 TABLE_PRIORITY_COLUMN,
-                String.class,
+                Priority.class,
                 null,
                 TABLE_PRIORITY_HEADER,
                 null,
                 Table.Align.CENTER
         );
+
+        recipeTable.setConverter(
+                TABLE_CREATION_DATE_COLUMN,
+                new StringToDateConverter() {
+                    @Override
+                    public DateFormat getFormat(Locale locale) {
+                        return new SimpleDateFormat("dd.MM.yyyy");
+                    }
+                }
+        );
+        recipeTable.setConverter(
+                TABLE_EXPIRATION_DATE_COLUMN,
+                new StringToDateConverter() {
+                    @Override
+                    public DateFormat getFormat(Locale locale) {
+                        return new SimpleDateFormat("dd.MM.yyyy");
+                    }
+                }
+        );
+
+        recipeTable.setConverter(TABLE_DOCTOR_COLUMN, new DoctorToStringConverter());
+        recipeTable.setConverter(TABLE_PATIENT_COLUMN, new PatientToStringConverter());
+        recipeTable.setConverter(TABLE_PRIORITY_COLUMN, new PriorityToStringConverter());
+
         recipeTable.setSelectable(true);
         recipeTable.setImmediate(true);
         recipeTable.setNullSelectionAllowed(false);
@@ -198,30 +234,6 @@ public class RecipeView extends VerticalLayout implements View {
             } else {
                 disableButtons();
             }
-        });
-
-        // fixme open too much windows
-        recipeTable.addItemClickListener(event -> {
-            /*if (event.isDoubleClick()) {
-                Object tableValue = recipeTable.getValue();
-                if (tableValue != null) {
-                    DoctorModalWindow dMW = new DoctorModalWindow(
-                            (Long) tableValue,
-                            recipeTable.getItem(tableValue),
-                            dataController);
-                    dMW.addCloseListener(closeEvent -> {
-                        try {
-                            refreshTable();
-                        } catch (RefreshTableException e) {
-                            Notification.show(
-                                    "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                    Notification.Type.ERROR_MESSAGE
-                            );
-                        }
-                    });
-                    getUI().addWindow(dMW);
-                }
-            }*/
         });
         disableButtons();
     }
