@@ -1,5 +1,6 @@
 package com.haulmont.testtask.view.utils;
 
+import com.haulmont.testtask.database.utils.hibernate.PriorityConverter;
 import com.haulmont.testtask.domain.auxiliary.Priority;
 import com.vaadin.data.util.converter.Converter;
 
@@ -8,13 +9,16 @@ import java.util.Locale;
 public class PriorityToStringConverter implements Converter<String, Priority> {
     @Override
     public Priority convertToModel(String s, Class<? extends Priority> aClass, Locale locale) throws ConversionException {
-        // todo
-        return null;
+        throw new ConversionException("Operation is not supported");
     }
 
     @Override
     public String convertToPresentation(Priority priority, Class<? extends String> aClass, Locale locale) throws ConversionException {
-        return priority != null ? priority.toString() : "null";
+        if (priority != null) {
+            return new PriorityConverter().convertToDatabaseColumn(priority);
+        } else {
+            return "Unknown";
+        }
     }
 
     @Override

@@ -5,5 +5,8 @@ public class HibernateUtilConstants {
             PERSISTENT_UNIT_NAME = "testtask",
             NORMAL_PRIORITY_RUSSIAN = "Нормальный",
             CITO_PRIORITY_RUSSIAN = "Срочный",
-            STATIM_PRIORITY_RUSSIAN = "Немедленный";
+            STATIM_PRIORITY_RUSSIAN = "Немедленный",
+            NORMAL_PRIORITY_ENG = "Normal",
+            CITO_PRIORITY_ENG = "Cito",
+            STATIM_PRIORITY_ENG = "Statim";
 }

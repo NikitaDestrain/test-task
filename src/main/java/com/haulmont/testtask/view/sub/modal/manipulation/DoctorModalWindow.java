@@ -15,11 +15,12 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.*;
+
 public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
 
     private static final String EDIT_DOCTOR = "Edit doctor";
     private static final String ADD_DOCTOR = "Add doctor";
-    private static final String FIELD_WIDTH = "100%";
 
     private TextField nameField;
     private TextField surnameField;
@@ -36,10 +37,7 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
                 try {
                     dataController.create(doctorDTO);
                 } catch (DataControllerCreationException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, try again",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION, Notification.Type.ERROR_MESSAGE);
                 }
                 close();
             }
@@ -60,10 +58,7 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
                 try {
                     dataController.update(convert(id));
                 } catch (DataControllerUpdatingException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, try again",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION, Notification.Type.ERROR_MESSAGE);
                 }
             }
             close();
@@ -96,7 +91,7 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
                 "Surname must contain only letters")
         );
 
-        patronymicField = new TextField("Patronymic");
+        patronymicField = new TextField("Patronymic (optional)");
         patronymicField.setRequired(false);
         patronymicField.setWidth(FIELD_WIDTH);
         patronymicField.setMaxLength(30);
@@ -184,10 +179,7 @@ public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
             patronymicField.validate();
             specializationField.validate();
         } catch (Validator.InvalidValueException e) {
-            Notification.show(
-                    "Incorrect input data :(\n\nClick me and try again",
-                    Notification.Type.ERROR_MESSAGE
-            );
+            Notification.show(INCORRECT_INPUT_DATA_MESSAGE, Notification.Type.ERROR_MESSAGE);
             return false;
         }
         return true;

@@ -12,6 +12,9 @@ import com.vaadin.ui.*;
 
 import java.util.List;
 
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.PATIENT_RECIPE_CONSTRAINT_MESSAGE;
+
 public class PatientView extends VerticalLayout implements View {
 
     public static final String TABLE_NAME_COLUMN = "name";
@@ -23,6 +26,7 @@ public class PatientView extends VerticalLayout implements View {
     private static final String TABLE_SURNAME_HEADER = "Surname";
     private static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
     private static final String TABLE_PHONE_NUMBER_HEADER = "Phone number";
+    private static final String TABLE_FOOTER = "Total: ";
 
     private static final String ADD_BUTTON_TEXT = "Add";
     private static final String EDIT_BUTTON_TEXT = "Edit";
@@ -53,10 +57,7 @@ public class PatientView extends VerticalLayout implements View {
                         refreshTable();
                     } catch (RefreshTableException e) {
                         System.out.println(e.getMessage());
-                        Notification.show(
-                                "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                Notification.Type.ERROR_MESSAGE
-                        );
+                        Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 });
                 getUI().addWindow(pMW);
@@ -74,10 +75,7 @@ public class PatientView extends VerticalLayout implements View {
                         try {
                             refreshTable();
                         } catch (RefreshTableException e) {
-                            Notification.show(
-                                    "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                    Notification.Type.ERROR_MESSAGE
-                            );
+                            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                         }
                     });
                     getUI().addWindow(pMW);
@@ -91,21 +89,13 @@ public class PatientView extends VerticalLayout implements View {
                     try {
                         dataController.remove((Long) tableValue);
                     } catch (DataControllerRemovingException e) {
-                        Notification.show(
-                                "Oops!!!\n\nSomething went wrong :(" +
-                                        "\n\nPlease, make sure the petient has no recipes" +
-                                        "\n\nClick me and try again",
-                                Notification.Type.ERROR_MESSAGE
-                        );
+                        Notification.show(PATIENT_RECIPE_CONSTRAINT_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 }
                 try {
                     refreshTable();
                 } catch (RefreshTableException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -151,10 +141,21 @@ public class PatientView extends VerticalLayout implements View {
                 null,
                 Table.Align.CENTER
         );
+
+        patientTable.addItemClickListener(event -> {
+            if (event.getItem() != null) {
+                enableButtons();
+            } else {
+                disableButtons();
+            }
+        });
+
         patientTable.setSelectable(true);
         patientTable.setImmediate(true);
         patientTable.setNullSelectionAllowed(false);
         patientTable.setSizeFull();
+        patientTable.setPageLength(patientTable.size());
+        patientTable.setFooterVisible(true);
     }
 
     private void refreshTable() throws RefreshTableException {
@@ -169,17 +170,10 @@ public class PatientView extends VerticalLayout implements View {
                         patient.getPhoneNumber()
                 }, patient.getId());
             }
+            patientTable.setColumnFooter(TABLE_NAME_COLUMN, TABLE_FOOTER + patients.size());
         } catch (DataControllerReadingException e) {
             throw new RefreshTableException(e.getMessage());
         }
-
-        patientTable.addItemClickListener(event -> {
-            if (event.getItem() != null) {
-                enableButtons();
-            } else {
-                disableButtons();
-            }
-        });
         disableButtons();
     }
 
@@ -198,7 +192,7 @@ public class PatientView extends VerticalLayout implements View {
         try {
             refreshTable();
         } catch (RefreshTableException e) {
-            e.printStackTrace();
+            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
         }
     }
 }

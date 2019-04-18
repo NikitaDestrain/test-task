@@ -14,6 +14,9 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DOCTOR_RECIPE_CONSTRAINT_MESSAGE;
+
 @Theme(ValoTheme.THEME_NAME)
 public class DoctorView extends VerticalLayout implements View {
 
@@ -26,6 +29,7 @@ public class DoctorView extends VerticalLayout implements View {
     private static final String TABLE_SURNAME_HEADER = "Surname";
     private static final String TABLE_PATRONYMIC_HEADER = "Patronymic";
     private static final String TABLE_SPECIALIZATION_HEADER = "Specialization";
+    private static final String TABLE_FOOTER = "Total: ";
 
     private static final String ADD_BUTTON_TEXT = "Add";
     private static final String EDIT_BUTTON_TEXT = "Edit";
@@ -58,10 +62,7 @@ public class DoctorView extends VerticalLayout implements View {
                         refreshTable();
                     } catch (RefreshTableException e) {
                         System.out.println(e.getMessage());
-                        Notification.show(
-                                "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                Notification.Type.ERROR_MESSAGE
-                        );
+                        Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 });
                 getUI().addWindow(dMW);
@@ -79,10 +80,7 @@ public class DoctorView extends VerticalLayout implements View {
                         try {
                             refreshTable();
                         } catch (RefreshTableException e) {
-                            Notification.show(
-                                    "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                    Notification.Type.ERROR_MESSAGE
-                            );
+                            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                         }
                     });
                     getUI().addWindow(dMW);
@@ -96,21 +94,13 @@ public class DoctorView extends VerticalLayout implements View {
                     try {
                         dataController.remove((Long) tableValue);
                     } catch (DataControllerRemovingException e) {
-                        Notification.show(
-                                "Oops!!!\n\nSomething went wrong :(" +
-                                        "\n\nPlease, make sure the doctor has no recipes" +
-                                        "\n\nClick me and try again",
-                                Notification.Type.ERROR_MESSAGE
-                        );
+                        Notification.show(DOCTOR_RECIPE_CONSTRAINT_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 }
                 try {
                     refreshTable();
                 } catch (RefreshTableException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -161,10 +151,21 @@ public class DoctorView extends VerticalLayout implements View {
                 null,
                 Table.Align.CENTER
         );
+
+        doctorTable.addItemClickListener(event -> {
+            if (event.getItem() != null) {
+                enableButtons();
+            } else {
+                disableButtons();
+            }
+        });
+
         doctorTable.setSelectable(true);
         doctorTable.setImmediate(true);
         doctorTable.setNullSelectionAllowed(false);
         doctorTable.setSizeFull();
+        doctorTable.setPageLength(doctorTable.size());
+        doctorTable.setFooterVisible(true);
     }
 
     private void refreshTable() throws RefreshTableException {
@@ -179,17 +180,10 @@ public class DoctorView extends VerticalLayout implements View {
                         doctor.getSpecialization()
                 }, doctor.getId());
             }
+            doctorTable.setColumnFooter(TABLE_NAME_COLUMN, TABLE_FOOTER + doctors.size());
         } catch (DataControllerReadingException e) {
             throw new RefreshTableException(e.getMessage());
         }
-
-        doctorTable.addItemClickListener(event -> {
-            if (event.getItem() != null) {
-                enableButtons();
-            } else {
-                disableButtons();
-            }
-        });
         disableButtons();
     }
 
@@ -210,7 +204,7 @@ public class DoctorView extends VerticalLayout implements View {
         try {
             refreshTable();
         } catch (RefreshTableException e) {
-            e.printStackTrace();
+            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
         }
     }
 }

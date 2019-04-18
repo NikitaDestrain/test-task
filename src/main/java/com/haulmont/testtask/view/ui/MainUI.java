@@ -87,6 +87,7 @@ public class MainUI extends UI {
     private void initMenuBar() {
         menuBar = new MenuBar();
         menuBar.setSizeFull();
+        menuBar.setResponsive(true);
         menuBar.addItem(MENU_HOME_NAME, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 viewNavigator.navigateTo(MENU_HOME_VIEW_NAME);

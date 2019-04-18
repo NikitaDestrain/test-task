@@ -13,13 +13,13 @@ public class PriorityConverter implements AttributeConverter<Priority, String> {
     public String convertToDatabaseColumn(Priority priority) {
         switch (priority) {
             case NORMAL:
-                return NORMAL_PRIORITY_RUSSIAN;
+                return NORMAL_PRIORITY_ENG;
             case CITO:
-                return CITO_PRIORITY_RUSSIAN;
+                return CITO_PRIORITY_ENG;
             case STATIM:
-                return STATIM_PRIORITY_RUSSIAN;
+                return STATIM_PRIORITY_ENG;
             default:
-                return NORMAL_PRIORITY_RUSSIAN;
+                return NORMAL_PRIORITY_ENG;
         }
     }
 
@@ -31,6 +31,12 @@ public class PriorityConverter implements AttributeConverter<Priority, String> {
             case CITO_PRIORITY_RUSSIAN:
                 return Priority.CITO;
             case STATIM_PRIORITY_RUSSIAN:
+                return Priority.STATIM;
+            case NORMAL_PRIORITY_ENG:
+                return Priority.NORMAL;
+            case CITO_PRIORITY_ENG:
+                return Priority.CITO;
+            case STATIM_PRIORITY_ENG:
                 return Priority.STATIM;
             default:
                 return Priority.NORMAL;

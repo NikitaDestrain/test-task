@@ -13,7 +13,23 @@ public class DoctorToStringConverter implements Converter<String, DoctorDTO> {
 
     @Override
     public String convertToPresentation(DoctorDTO doctorDTO, Class<? extends String> aClass, Locale locale) throws ConversionException {
-        return doctorDTO != null ? doctorDTO.getName() : "null";
+        if (doctorDTO != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(doctorDTO.getSurname());
+            sb.append(" ");
+            sb.append(doctorDTO.getName().charAt(0));
+            sb.append(".");
+            if (!doctorDTO.getPatronymic().equals("") && doctorDTO.getPatronymic() != null) {
+                sb.append(doctorDTO.getPatronymic().charAt(0));
+                sb.append(".");
+            }
+            sb.append(" (");
+            sb.append(doctorDTO.getSpecialization());
+            sb.append(")");
+            return sb.toString();
+        } else {
+            return "Unknown";
+        }
     }
 
     @Override

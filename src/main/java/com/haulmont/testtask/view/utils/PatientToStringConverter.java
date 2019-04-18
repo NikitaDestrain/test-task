@@ -14,7 +14,20 @@ public class PatientToStringConverter implements Converter<String, PatientDTO> {
 
     @Override
     public String convertToPresentation(PatientDTO patientDTO, Class<? extends String> aClass, Locale locale) throws ConversionException {
-        return patientDTO != null ? patientDTO.getName() : "null";
+        if (patientDTO != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(patientDTO.getSurname());
+            sb.append(" ");
+            sb.append(patientDTO.getName().charAt(0));
+            sb.append(".");
+            if (!patientDTO.getPatronymic().equals("") && patientDTO.getPatronymic() != null) {
+                sb.append(patientDTO.getPatronymic().charAt(0));
+                sb.append(".");
+            }
+            return sb.toString();
+        } else {
+            return "Unknown";
+        } 
     }
 
     @Override

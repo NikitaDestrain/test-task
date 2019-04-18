@@ -1,5 +1,8 @@
 package com.haulmont.testtask.view.sub;
 
+import com.haulmont.testtask.controller.implementation.DataControllerManagerImpl;
+import com.haulmont.testtask.controller.interfaces.DoctorDataController;
+import com.haulmont.testtask.controller.interfaces.PatientDataController;
 import com.haulmont.testtask.controller.interfaces.RecipeDataController;
 import com.haulmont.testtask.domain.auxiliary.Priority;
 import com.haulmont.testtask.domain.dto.DoctorDTO;
@@ -8,6 +11,7 @@ import com.haulmont.testtask.domain.dto.RecipeDTO;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
+import com.haulmont.testtask.view.sub.modal.manipulation.RecipeModalWindow;
 import com.haulmont.testtask.view.utils.DoctorToStringConverter;
 import com.haulmont.testtask.view.utils.PatientToStringConverter;
 import com.haulmont.testtask.view.utils.PriorityToStringConverter;
@@ -21,6 +25,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.*;
 
 public class RecipeView extends VerticalLayout implements View {
 
@@ -37,6 +43,7 @@ public class RecipeView extends VerticalLayout implements View {
     private static final String TABLE_CREATION_DATE_HEADER = "Creation Date";
     private static final String TABLE_EXPIRATION_DATE_HEADER = "Expiration Date";
     private static final String TABLE_PRIORITY_HEADER = "Priority";
+    private static final String TABLE_FOOTER = "Total: ";
 
     private static final String ADD_BUTTON_TEXT = "Add";
     private static final String EDIT_BUTTON_TEXT = "Edit";
@@ -48,10 +55,14 @@ public class RecipeView extends VerticalLayout implements View {
     private MenuBar.MenuItem editItem;
     private MenuBar.MenuItem deleteItem;
 
-    private RecipeDataController dataController;
+    private RecipeDataController recipeDataController;
+    private PatientDataController patientDataController;
+    private DoctorDataController doctorDataController;
 
     public RecipeView(RecipeDataController recipeDataController) {
-        this.dataController = recipeDataController;
+        this.recipeDataController = recipeDataController;
+        this.patientDataController = DataControllerManagerImpl.getInstance().getPatientDataController();
+        this.doctorDataController = DataControllerManagerImpl.getInstance().getDoctorDataController();
         initMenuBar();
         initTable();
         createFrame();
@@ -61,41 +72,41 @@ public class RecipeView extends VerticalLayout implements View {
         menuBar = new MenuBar();
         addItem = menuBar.addItem(ADD_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                /*DoctorModalWindow dMW = new DoctorModalWindow(dataController);
-                dMW.addCloseListener(closeEvent -> {
+                RecipeModalWindow rMW = new RecipeModalWindow(
+                        recipeDataController,
+                        patientDataController,
+                        doctorDataController
+                );
+                rMW.addCloseListener(closeEvent -> {
                     try {
                         refreshTable();
                     } catch (RefreshTableException e) {
                         System.out.println(e.getMessage());
-                        Notification.show(
-                                "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                Notification.Type.ERROR_MESSAGE
-                        );
+                        Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 });
-                getUI().addWindow(dMW);*/
+                getUI().addWindow(rMW);
             }
         });
         editItem = menuBar.addItem(EDIT_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                /*Object tableValue = recipeTable.getValue();
+                Object tableValue = recipeTable.getValue();
                 if (tableValue != null) {
-                    DoctorModalWindow dMW = new DoctorModalWindow(
+                    RecipeModalWindow rMW = new RecipeModalWindow(
                             (Long) tableValue,
                             recipeTable.getItem(tableValue),
-                            dataController);
-                    dMW.addCloseListener(closeEvent -> {
+                            recipeDataController,
+                            patientDataController,
+                            doctorDataController);
+                    rMW.addCloseListener(closeEvent -> {
                         try {
                             refreshTable();
                         } catch (RefreshTableException e) {
-                            Notification.show(
-                                    "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                                    Notification.Type.ERROR_MESSAGE
-                            );
+                            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                         }
                     });
-                    getUI().addWindow(dMW);
-                }*/
+                    getUI().addWindow(rMW);
+                }
             }
         });
         deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, new MenuBar.Command() {
@@ -103,22 +114,15 @@ public class RecipeView extends VerticalLayout implements View {
                 Object tableValue = recipeTable.getValue();
                 if (tableValue != null) {
                     try {
-                        dataController.remove((Long) tableValue);
+                        recipeDataController.remove((Long) tableValue);
                     } catch (DataControllerRemovingException e) {
-                        Notification.show(
-                                "Oops!!!\n\nSomething went wrong :(" +
-                                        "\n\nClick me and try again",
-                                Notification.Type.ERROR_MESSAGE
-                        );
+                        Notification.show(DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION, Notification.Type.ERROR_MESSAGE);
                     }
                 }
                 try {
                     refreshTable();
                 } catch (RefreshTableException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, reload page",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -204,16 +208,26 @@ public class RecipeView extends VerticalLayout implements View {
         recipeTable.setConverter(TABLE_PATIENT_COLUMN, new PatientToStringConverter());
         recipeTable.setConverter(TABLE_PRIORITY_COLUMN, new PriorityToStringConverter());
 
+        recipeTable.addItemClickListener(event -> {
+            if (event.getItem() != null) {
+                enableButtons();
+            } else {
+                disableButtons();
+            }
+        });
+
         recipeTable.setSelectable(true);
         recipeTable.setImmediate(true);
         recipeTable.setNullSelectionAllowed(false);
         recipeTable.setSizeFull();
+        recipeTable.setPageLength(recipeTable.size());
+        recipeTable.setFooterVisible(true);
     }
 
     private void refreshTable() throws RefreshTableException {
         recipeTable.removeAllItems();
         try {
-            List<RecipeDTO> recipes = dataController.getAll();
+            List<RecipeDTO> recipes = recipeDataController.getAll();
             for (RecipeDTO recipe : recipes) {
                 recipeTable.addItem(new Object[]{
                         recipe.getDescription(),
@@ -224,17 +238,10 @@ public class RecipeView extends VerticalLayout implements View {
                         recipe.getPriority()
                 }, recipe.getId());
             }
+            recipeTable.setColumnFooter(TABLE_DESCRIPTION_COLUMN, TABLE_FOOTER + recipes.size());
         } catch (DataControllerReadingException e) {
             throw new RefreshTableException(e.getMessage());
         }
-
-        recipeTable.addItemClickListener(event -> {
-            if (event.getItem() != null) {
-                enableButtons();
-            } else {
-                disableButtons();
-            }
-        });
         disableButtons();
     }
 
@@ -253,7 +260,7 @@ public class RecipeView extends VerticalLayout implements View {
         try {
             refreshTable();
         } catch (RefreshTableException e) {
-            e.printStackTrace();
+            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view.sub.modal.manipulation;
 
-import com.haulmont.testtask.controller.interfaces.DoctorDataController;
 import com.haulmont.testtask.controller.interfaces.PatientDataController;
 import com.haulmont.testtask.domain.dto.PatientDTO;
 import com.haulmont.testtask.exception.controller.DataControllerCreationException;
@@ -15,11 +14,13 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION;
+import static com.haulmont.testtask.view.sub.NotificationMessageConstants.INCORRECT_INPUT_DATA_MESSAGE;
+
 public class PatientModalWindow extends ModalWindow<PatientDTO> {
 
     private static final String EDIT_PATIENT = "Edit patient";
     private static final String ADD_PATIENT = "Add patient";
-    private static final String FIELD_WIDTH = "100%";
 
     private TextField nameField;
     private TextField surnameField;
@@ -36,10 +37,7 @@ public class PatientModalWindow extends ModalWindow<PatientDTO> {
                 try {
                     dataController.create(patientDTO);
                 } catch (DataControllerCreationException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, try again",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION, Notification.Type.ERROR_MESSAGE);
                 }
                 close();
             }
@@ -60,10 +58,7 @@ public class PatientModalWindow extends ModalWindow<PatientDTO> {
                 try {
                     dataController.update(convert(id));
                 } catch (DataControllerUpdatingException e) {
-                    Notification.show(
-                            "Oops!!!\n\nSomething went wrong :(\n\nPlease, try again",
-                            Notification.Type.ERROR_MESSAGE
-                    );
+                    Notification.show(DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION, Notification.Type.ERROR_MESSAGE);
                 }
             }
             close();
@@ -96,7 +91,7 @@ public class PatientModalWindow extends ModalWindow<PatientDTO> {
                 "Surname must contain only letters")
         );
 
-        patronymicField = new TextField("Patronymic");
+        patronymicField = new TextField("Patronymic (optional)");
         patronymicField.setRequired(false);
         patronymicField.setWidth(FIELD_WIDTH);
         patronymicField.setMaxLength(30);
@@ -150,7 +145,7 @@ public class PatientModalWindow extends ModalWindow<PatientDTO> {
                 submitButton.setEnabled(false);
             }
         });
-        
+
         formLayout.addComponents(nameField, surnameField, patronymicField, phoneNumberField);
         setContent(mainLayout);
     }
@@ -184,10 +179,7 @@ public class PatientModalWindow extends ModalWindow<PatientDTO> {
             patronymicField.validate();
             phoneNumberField.validate();
         } catch (Validator.InvalidValueException e) {
-            Notification.show(
-                    "Incorrect input data :(\n\nClick me and try again",
-                    Notification.Type.ERROR_MESSAGE
-            );
+            Notification.show(INCORRECT_INPUT_DATA_MESSAGE, Notification.Type.ERROR_MESSAGE);
             return false;
         }
         return true;
