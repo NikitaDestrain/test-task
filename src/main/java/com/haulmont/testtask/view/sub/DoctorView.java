@@ -6,6 +6,7 @@ import com.haulmont.testtask.exception.controller.DataControllerReadingException
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
 import com.haulmont.testtask.view.sub.modal.manipulation.DoctorModalWindow;
+import com.haulmont.testtask.view.sub.modal.statistic.DoctorStatisticModalWindow;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -106,7 +107,15 @@ public class DoctorView extends VerticalLayout implements View {
         });
         statisticItem = menuBar.addItem(STATISTIC_BUTTON_TEXT, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-
+                DoctorStatisticModalWindow dSMW = new DoctorStatisticModalWindow();
+                dSMW.addCloseListener(closeEvent -> {
+                    try {
+                        refreshTable();
+                    } catch (RefreshTableException e) {
+                        Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
+                    }
+                });
+                getUI().addWindow(dSMW);
             }
         });
     }

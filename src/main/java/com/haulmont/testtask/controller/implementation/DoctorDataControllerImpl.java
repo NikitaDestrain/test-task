@@ -15,6 +15,7 @@ import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -77,7 +78,20 @@ public class DoctorDataControllerImpl implements DoctorDataController {
     }
 
     @Override
-    public DoctorStatisticDTO getStatisticForId() throws DataControllerReadingException {
-        return null;
+    public DoctorStatisticDTO getStatisticForId(Long id) throws DataControllerReadingException {
+        try {
+            return doctorDAO.readStatistic(id);
+        } catch (DAOEntityReadingException e) {
+            throw new DataControllerReadingException(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<DoctorStatisticDTO> getStatisticForAll() throws DataControllerReadingException {
+        try {
+            return doctorDAO.readStatisticForAll();
+        } catch (DAOEntityReadingException e) {
+            throw new DataControllerReadingException(e.getMessage());
+        }
     }
 }

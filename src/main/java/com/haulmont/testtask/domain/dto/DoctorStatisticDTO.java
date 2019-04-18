@@ -4,5 +4,9 @@ import lombok.Data;
 
 @Data
 public class DoctorStatisticDTO {
-    DoctorDTO doctorDTO;
+    private Long doctorId;
+    private String doctorName;
+    private String doctorSurname;
+    private String doctorPatronymic;
+    private int recipeCount;
 }

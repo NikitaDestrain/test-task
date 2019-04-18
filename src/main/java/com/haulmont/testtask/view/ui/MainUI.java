@@ -81,7 +81,8 @@ public class MainUI extends UI {
         viewNavigator.addView(MENU_HOME_VIEW_NAME, new HomeView());
         viewNavigator.addView(MENU_DOCTORS_VIEW_NAME, new DoctorView(dataControllerManager.getDoctorDataController()));
         viewNavigator.addView(MENU_PATIENTS_VIEW_NAME, new PatientView(dataControllerManager.getPatientDataController()));
-        viewNavigator.addView(MENU_RECIPES_VIEW_NAME, new RecipeView(dataControllerManager.getRecipeDataController()));
+        viewNavigator.addView(MENU_RECIPES_VIEW_NAME, new RecipeView(dataControllerManager.getRecipeDataController(),
+                dataControllerManager.getDoctorDataController(), dataControllerManager.getPatientDataController()));
     }
 
     private void initMenuBar() {

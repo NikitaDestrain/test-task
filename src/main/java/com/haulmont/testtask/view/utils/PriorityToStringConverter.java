@@ -15,7 +15,7 @@ public class PriorityToStringConverter implements Converter<String, Priority> {
     @Override
     public String convertToPresentation(Priority priority, Class<? extends String> aClass, Locale locale) throws ConversionException {
         if (priority != null) {
-            return new PriorityConverter().convertToDatabaseColumn(priority);
+            return new PriorityConverter().convertToViewValue(priority);
         } else {
             return "Unknown";
         }

@@ -42,4 +42,17 @@ public class PriorityConverter implements AttributeConverter<Priority, String> {
                 return Priority.NORMAL;
         }
     }
+
+    public String convertToViewValue(Priority priority) {
+        switch (priority) {
+            case NORMAL:
+                return NORMAL_PRIORITY_MULTI;
+            case CITO:
+                return CITO_PRIORITY_MULTI;
+            case STATIM:
+                return STATIM_PRIORITY_MULTI;
+            default:
+                return NORMAL_PRIORITY_MULTI;
+        }
+    }
 }

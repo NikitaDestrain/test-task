@@ -1,6 +1,7 @@
 package com.haulmont.testtask.database.interfaces;
 
 import com.haulmont.testtask.domain.dto.DoctorDTO;
+import com.haulmont.testtask.domain.dto.DoctorStatisticDTO;
 import com.haulmont.testtask.domain.entity.Doctor;
 import com.haulmont.testtask.exception.database.DAOEntityCreationException;
 import com.haulmont.testtask.exception.database.DAOEntityDeletingException;
@@ -21,4 +22,8 @@ public interface DoctorDAO {
     List<DoctorDTO> getAll() throws DAOEntityReadingException;
 
     boolean contains(Long id);
+
+    DoctorStatisticDTO readStatistic(Long id) throws DAOEntityReadingException;
+
+    List<DoctorStatisticDTO> readStatisticForAll() throws DAOEntityReadingException;
 }

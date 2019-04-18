@@ -36,6 +36,7 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
     private static final String ADD_PATIENT = "Add recipe";
 
     private static final String RECIPE_WINDOW_WIDTH = "70%";
+    private static final int DEFAULT_PRIORITY = 0;
 
     private TextArea descriptionField;
     private ComboBox patientField;
@@ -51,7 +52,12 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
                              DoctorDataController doctorDataController) {
         super();
         setCaption(ADD_PATIENT);
+        this.doctorDataController = doctorDataController;
+        this.patientDataController = patientDataController;
         createForm();
+        initPatientField(null, false);
+        initDoctorField(null, false);
+        initPriorityField(null, false);
         submitButton.addClickListener(clickEvent -> {
             if (isDataValid()) {
                 RecipeDTO recipeDTO = convert();
@@ -63,8 +69,6 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
                 close();
             }
         });
-        this.doctorDataController = doctorDataController;
-        this.patientDataController = patientDataController;
     }
 
     public RecipeModalWindow(Long id,
@@ -74,12 +78,14 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
                              DoctorDataController doctorDataController) {
         super();
         setCaption(EDIT_PATIENT);
+        this.doctorDataController = doctorDataController;
+        this.patientDataController = patientDataController;
         createForm();
         descriptionField.setValue(String.valueOf(item.getItemProperty(RecipeView.TABLE_DESCRIPTION_COLUMN).getValue()));
-        initPatientField(String.valueOf(item.getItemProperty(RecipeView.TABLE_PATIENT_COLUMN).getValue()));
-        initDoctorField(String.valueOf(item.getItemProperty(RecipeView.TABLE_DOCTOR_COLUMN).getValue()));
+        initPatientField((PatientDTO) item.getItemProperty(RecipeView.TABLE_PATIENT_COLUMN).getValue(), true);
+        initDoctorField((DoctorDTO) item.getItemProperty(RecipeView.TABLE_DOCTOR_COLUMN).getValue(), true);
         expirationDateField.setValue((Date) item.getItemProperty(RecipeView.TABLE_EXPIRATION_DATE_COLUMN).getValue());
-        initPriorityField(String.valueOf(item.getItemProperty(RecipeView.TABLE_PRIORITY_COLUMN).getValue()));
+        initPriorityField((Priority) item.getItemProperty(RecipeView.TABLE_PRIORITY_COLUMN).getValue(), true);
 
         submitButton.addClickListener(clickEvent -> {
             if (isDataValid()) {
@@ -91,8 +97,6 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
             }
             close();
         });
-        this.doctorDataController = doctorDataController;
-        this.patientDataController = patientDataController;
     }
 
     @Override
@@ -103,7 +107,7 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
         descriptionField.setRows(3);
         descriptionField.setWordwrap(true);
         descriptionField.setRequiredError("Enter description");
-        descriptionField.setMaxLength(30);
+        descriptionField.setMaxLength(200);
         descriptionField.setImmediate(true);
         descriptionField.addValidator(new RegexpValidator(
                 ModalWindowConstants.LETTER_REGEX_200_CHARS,
@@ -131,8 +135,8 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
 
         expirationDateField = new DateField("Expiration date");
         expirationDateField.setRequired(true);
-        expirationDateField.setWidth("100%");
-        expirationDateField.setRequiredError("Укажите дату рождения");
+        expirationDateField.setWidth(FIELD_WIDTH);
+        expirationDateField.setRequiredError("Enter expiration date");
         expirationDateField.setDateFormat("dd.MM.yyyy");
         expirationDateField.setValue(new Date(System.currentTimeMillis()));
         expirationDateField.setRangeStart(new Date(System.currentTimeMillis()));
@@ -196,7 +200,7 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
         setWidth(RECIPE_WINDOW_WIDTH);
     }
 
-    private void initPatientField(String currentPatient) {
+    private void initPatientField(PatientDTO currentPatient, boolean isEdit) {
         patientField.removeAllItems();
         List<PatientDTO> patients = new ArrayList<>();
         try {
@@ -209,37 +213,37 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
             patientField.addItem(patient);
             patientField.setItemCaption(
                     patient,
-                    new PatientToStringConverter().convertToPresentation(patient, String.class, null)
+                    new PatientToStringConverter().convertToPresentation(patient, String.class, getLocale())
             );
-            if (currentPatient == null) {
-                patientField.select(patient);
-            } else if (currentPatient.equals(new PatientToStringConverter().convertToPresentation(
-                    patient,
-                    String.class, null))) {
-                patientField.select(patient);
+            if (isEdit) {
+                if (currentPatient.equals(patient)) {
+                    patientField.select(patient);
+                }
             }
         }
     }
 
-    private void initPriorityField(String currentPriority) {
+    private void initPriorityField(Priority currentPriority, boolean isEdit) {
         priorityField.removeAllItems();
-        for (Priority priority : Priority.values()) {
+        Priority[] priorities = Priority.values();
+        for (Priority priority : priorities) {
             priorityField.addItem(priority);
             priorityField.setItemCaption(
                     priority,
-                    new PriorityToStringConverter().convertToPresentation(priority, String.class, null)
+                    new PriorityToStringConverter().convertToPresentation(priority, String.class, getLocale())
             );
-            if (currentPriority == null) {
-                priorityField.select(priority);
-            } else if (currentPriority.equals(new PriorityToStringConverter().convertToPresentation(
-                    priority,
-                    String.class, null))) {
-                priorityField.select(priority);
+            if (isEdit) {
+                if (currentPriority.equals(priority)) {
+                    priorityField.select(priority);
+                }
             }
+        }
+        if (!isEdit) {
+            priorityField.select(priorities[DEFAULT_PRIORITY]);
         }
     }
 
-    private void initDoctorField(String currentDoctor) {
+    private void initDoctorField(DoctorDTO currentDoctor, boolean isEdit) {
         doctorField.removeAllItems();
         List<DoctorDTO> doctors = new ArrayList<>();
         try {
@@ -252,18 +256,15 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
             doctorField.addItem(doctor);
             doctorField.setItemCaption(
                     doctor,
-                    new DoctorToStringConverter().convertToPresentation(doctor, String.class, null)
+                    new DoctorToStringConverter().convertToPresentation(doctor, String.class, getLocale())
             );
-            if (currentDoctor == null) {
-                patientField.select(doctor);
-            } else if (currentDoctor.equals(new DoctorToStringConverter().convertToPresentation(
-                    doctor,
-                    String.class, null))) {
-                doctorField.select(doctor);
+            if (isEdit) {
+                if (currentDoctor.equals(doctor)) {
+                    doctorField.select(doctor);
+                }
             }
         }
     }
-
 
     @Override
     protected RecipeDTO convert() {

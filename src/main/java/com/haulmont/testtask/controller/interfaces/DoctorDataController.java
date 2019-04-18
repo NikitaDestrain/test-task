@@ -20,5 +20,7 @@ public interface DoctorDataController {
 
     List<DoctorDTO> getAll() throws DataControllerReadingException;
 
-    DoctorStatisticDTO getStatisticForId() throws DataControllerReadingException;
+    DoctorStatisticDTO getStatisticForId(Long id) throws DataControllerReadingException;
+
+    List<DoctorStatisticDTO> getStatisticForAll() throws DataControllerReadingException;
 }

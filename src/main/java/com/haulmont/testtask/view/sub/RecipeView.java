@@ -59,10 +59,11 @@ public class RecipeView extends VerticalLayout implements View {
     private PatientDataController patientDataController;
     private DoctorDataController doctorDataController;
 
-    public RecipeView(RecipeDataController recipeDataController) {
+    public RecipeView(RecipeDataController recipeDataController, DoctorDataController doctorDataController,
+                      PatientDataController patientDataController) {
         this.recipeDataController = recipeDataController;
-        this.patientDataController = DataControllerManagerImpl.getInstance().getPatientDataController();
-        this.doctorDataController = DataControllerManagerImpl.getInstance().getDoctorDataController();
+        this.patientDataController = patientDataController;
+        this.doctorDataController = doctorDataController;
         initMenuBar();
         initTable();
         createFrame();

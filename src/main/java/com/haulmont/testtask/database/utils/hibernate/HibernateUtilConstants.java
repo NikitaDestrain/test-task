@@ -8,5 +8,8 @@ public class HibernateUtilConstants {
             STATIM_PRIORITY_RUSSIAN = "Немедленный",
             NORMAL_PRIORITY_ENG = "Normal",
             CITO_PRIORITY_ENG = "Cito",
-            STATIM_PRIORITY_ENG = "Statim";
+            STATIM_PRIORITY_ENG = "Statim",
+            NORMAL_PRIORITY_MULTI = "Normal (Нормальный)",
+            CITO_PRIORITY_MULTI = "Cito (Срочный)",
+            STATIM_PRIORITY_MULTI = "Statim (Немедленный)";
 }
