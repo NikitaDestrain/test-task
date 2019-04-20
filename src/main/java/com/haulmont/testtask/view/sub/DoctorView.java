@@ -1,12 +1,15 @@
 package com.haulmont.testtask.view.sub;
 
 import com.haulmont.testtask.controller.interfaces.DoctorDataController;
+import com.haulmont.testtask.controller.interfaces.StatisticDataController;
 import com.haulmont.testtask.domain.dto.DoctorDTO;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
+import com.haulmont.testtask.exception.controller.DataControllerStatisticCreationException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
 import com.haulmont.testtask.view.sub.modal.manipulation.DoctorModalWindow;
-import com.haulmont.testtask.view.sub.modal.statistic.DoctorStatisticModalWindow;
+import com.haulmont.testtask.view.sub.modal.statistic.StatisticModalWindow;
+import com.haulmont.testtask.view.ui.UIHelper;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -37,6 +40,8 @@ public class DoctorView extends VerticalLayout implements View {
     private static final String DELETE_BUTTON_TEXT = "Delete";
     private static final String STATISTIC_BUTTON_TEXT = "Show Statistic";
 
+    private static final String TAB_NAME = "Doctor information";
+
     private Table doctorTable;
     private MenuBar menuBar;
     private MenuBar.MenuItem addItem;
@@ -45,9 +50,11 @@ public class DoctorView extends VerticalLayout implements View {
     private MenuBar.MenuItem statisticItem;
 
     private DoctorDataController dataController;
+    private StatisticDataController statisticDataController;
 
-    public DoctorView(DoctorDataController doctorDataController) {
+    public DoctorView(DoctorDataController doctorDataController, StatisticDataController statisticDataController) {
         this.dataController = doctorDataController;
+        this.statisticDataController = statisticDataController;
         initMenuBar();
         initTable();
         createFrame();
@@ -55,75 +62,85 @@ public class DoctorView extends VerticalLayout implements View {
 
     private void initMenuBar() {
         menuBar = new MenuBar();
-        addItem = menuBar.addItem(ADD_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                DoctorModalWindow dMW = new DoctorModalWindow(dataController);
+        addItem = menuBar.addItem(ADD_BUTTON_TEXT, selectedItem -> {
+            DoctorModalWindow dMW = new DoctorModalWindow(dataController);
+            dMW.addCloseListener(closeEvent -> {
+                try {
+                    refreshTable();
+                } catch (RefreshTableException e) {
+                    System.out.println(e.getMessage());
+                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
+                }
+            });
+            getUI().addWindow(dMW);
+        });
+        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, selectedItem -> {
+            Object tableValue = doctorTable.getValue();
+            if (tableValue != null) {
+                DoctorModalWindow dMW = new DoctorModalWindow(
+                        (Long) tableValue,
+                        doctorTable.getItem(tableValue),
+                        dataController);
                 dMW.addCloseListener(closeEvent -> {
                     try {
                         refreshTable();
                     } catch (RefreshTableException e) {
-                        System.out.println(e.getMessage());
                         Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 });
                 getUI().addWindow(dMW);
             }
         });
-        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Object tableValue = doctorTable.getValue();
-                if (tableValue != null) {
-                    DoctorModalWindow dMW = new DoctorModalWindow(
-                            (Long) tableValue,
-                            doctorTable.getItem(tableValue),
-                            dataController);
-                    dMW.addCloseListener(closeEvent -> {
-                        try {
-                            refreshTable();
-                        } catch (RefreshTableException e) {
-                            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
-                        }
-                    });
-                    getUI().addWindow(dMW);
-                }
-            }
-        });
-        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Object tableValue = doctorTable.getValue();
-                if (tableValue != null) {
-                    try {
-                        dataController.remove((Long) tableValue);
-                    } catch (DataControllerRemovingException e) {
-                        Notification.show(DOCTOR_RECIPE_CONSTRAINT_MESSAGE, Notification.Type.ERROR_MESSAGE);
-                    }
-                }
+        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, selectedItem -> {
+            Object tableValue = doctorTable.getValue();
+            if (tableValue != null) {
                 try {
-                    refreshTable();
-                } catch (RefreshTableException e) {
-                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
+                    dataController.remove((Long) tableValue);
+                } catch (DataControllerRemovingException e) {
+                    Notification.show(DOCTOR_RECIPE_CONSTRAINT_MESSAGE, Notification.Type.ERROR_MESSAGE);
                 }
             }
+            try {
+                refreshTable();
+            } catch (RefreshTableException e) {
+                Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
+            }
         });
-        statisticItem = menuBar.addItem(STATISTIC_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                DoctorStatisticModalWindow dSMW = new DoctorStatisticModalWindow();
-                dSMW.addCloseListener(closeEvent -> {
+        statisticItem = menuBar.addItem(STATISTIC_BUTTON_TEXT, selectedItem -> {
+            try {
+                StatisticModalWindow sMW = new StatisticModalWindow(statisticDataController.processStatistic());
+                sMW.addCloseListener(closeEvent -> {
                     try {
                         refreshTable();
                     } catch (RefreshTableException e) {
                         Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 });
-                getUI().addWindow(dSMW);
+                getUI().addWindow(sMW);
+            } catch (DataControllerStatisticCreationException e) {
+                Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
             }
         });
     }
 
     private void createFrame() {
         setMargin(true);
-        addComponents(menuBar, doctorTable);
+        Label tabName = new Label(TAB_NAME);
+        tabName.setStyleName(UIHelper.TAB_NAME_STYLE);
+        addComponents(tabName, menuBar, doctorTable);
         setComponentAlignment(menuBar, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(tabName, Alignment.TOP_CENTER);
+        setSpacing(true);
+
+        addLayoutClickListener(layoutClickEvent -> {
+            Object selectedValue = doctorTable.getValue();
+            if (selectedValue != null &&
+                    !(layoutClickEvent.getClickedComponent() instanceof Table) &&
+                    !(layoutClickEvent.getClickedComponent() instanceof MenuBar)) {
+                doctorTable.unselect(selectedValue);
+                disableButtons();
+            }
+        });
     }
 
     private void initTable() {
@@ -189,6 +206,11 @@ public class DoctorView extends VerticalLayout implements View {
                         doctor.getSpecialization()
                 }, doctor.getId());
             }
+            if (doctors.size() != 0) {
+                statisticItem.setEnabled(true);
+            } else {
+                statisticItem.setEnabled(false);
+            }
             doctorTable.setColumnFooter(TABLE_NAME_COLUMN, TABLE_FOOTER + doctors.size());
         } catch (DataControllerReadingException e) {
             throw new RefreshTableException(e.getMessage());
@@ -199,13 +221,11 @@ public class DoctorView extends VerticalLayout implements View {
     private void enableButtons() {
         editItem.setEnabled(true);
         deleteItem.setEnabled(true);
-        statisticItem.setEnabled(true);
     }
 
     private void disableButtons() {
         editItem.setEnabled(false);
         deleteItem.setEnabled(false);
-        statisticItem.setEnabled(false);
     }
 
     @Override

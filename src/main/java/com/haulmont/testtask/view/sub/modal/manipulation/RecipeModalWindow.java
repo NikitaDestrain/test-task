@@ -12,8 +12,8 @@ import com.haulmont.testtask.exception.controller.DataControllerReadingException
 import com.haulmont.testtask.exception.controller.DataControllerUpdatingException;
 import com.haulmont.testtask.factory.dto.RecipeDTOFactory;
 import com.haulmont.testtask.view.sub.RecipeView;
-import com.haulmont.testtask.view.sub.interfaces.ModalWindow;
-import com.haulmont.testtask.view.sub.interfaces.ModalWindowConstants;
+import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindow;
+import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindowConstants;
 import com.haulmont.testtask.view.utils.DoctorToStringConverter;
 import com.haulmont.testtask.view.utils.PatientToStringConverter;
 import com.haulmont.testtask.view.utils.PriorityToStringConverter;

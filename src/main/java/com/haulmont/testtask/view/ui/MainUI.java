@@ -12,10 +12,9 @@ import com.vaadin.navigator.ViewDisplay;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.themes.ValoTheme;
 
 
-@Theme(ValoTheme.THEME_NAME)
+@Theme(UIHelper.THEME_NAME)
 public class MainUI extends UI {
     private static final String PAGE_TITLE = "Hospital Recipe System";
 
@@ -24,14 +23,14 @@ public class MainUI extends UI {
 
     private static final String SHOW_LAYOUT_WIDTH = "100%";
     private static final String SHOW_LAYOUT_HEIGHT = "100%";
-    private static final int SHOW_LAYOUT_EXPAND_RATIO = 9;
+    private static final int SHOW_LAYOUT_EXPAND_RATIO = 1;
 
     private static final String MAIN_LAYOUT_WIDTH = "100%";
 
     private static final String MENU_HOME_VIEW_NAME = "";
-    private static final String MENU_DOCTORS_VIEW_NAME = "doctorView";
-    private static final String MENU_PATIENTS_VIEW_NAME = "patientView";
-    private static final String MENU_RECIPES_VIEW_NAME = "recipeView";
+    private static final String MENU_DOCTORS_VIEW_NAME = "doctors";
+    private static final String MENU_PATIENTS_VIEW_NAME = "patients";
+    private static final String MENU_RECIPES_VIEW_NAME = "recipes";
 
     private static final String MENU_HOME_NAME = "Home";
     private static final String MENU_DOCTORS_NAME = "Doctors";
@@ -68,7 +67,9 @@ public class MainUI extends UI {
         mainLayout = new VerticalLayout();
         mainLayout.setHeight(MAIN_LAYOUT_WIDTH);
         mainLayout.addComponents(header, showLayout);
-        mainLayout.setExpandRatio(header, HEADER_EXPAND_RATIO);
+        mainLayout.setComponentAlignment(header, Alignment.TOP_CENTER);
+        mainLayout.setComponentAlignment(showLayout, Alignment.MIDDLE_CENTER);
+        //mainLayout.setExpandRatio(header, HEADER_EXPAND_RATIO);
         mainLayout.setExpandRatio(showLayout, SHOW_LAYOUT_EXPAND_RATIO);
     }
 
@@ -79,7 +80,8 @@ public class MainUI extends UI {
     private void initViewNavigator() {
         viewNavigator = new Navigator(this, this.viewDisplay);
         viewNavigator.addView(MENU_HOME_VIEW_NAME, new HomeView());
-        viewNavigator.addView(MENU_DOCTORS_VIEW_NAME, new DoctorView(dataControllerManager.getDoctorDataController()));
+        viewNavigator.addView(MENU_DOCTORS_VIEW_NAME, new DoctorView(dataControllerManager.getDoctorDataController(),
+                dataControllerManager.getStatisticDataController()));
         viewNavigator.addView(MENU_PATIENTS_VIEW_NAME, new PatientView(dataControllerManager.getPatientDataController()));
         viewNavigator.addView(MENU_RECIPES_VIEW_NAME, new RecipeView(dataControllerManager.getRecipeDataController(),
                 dataControllerManager.getDoctorDataController(), dataControllerManager.getPatientDataController()));
@@ -89,25 +91,17 @@ public class MainUI extends UI {
         menuBar = new MenuBar();
         menuBar.setSizeFull();
         menuBar.setResponsive(true);
-        menuBar.addItem(MENU_HOME_NAME, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                viewNavigator.navigateTo(MENU_HOME_VIEW_NAME);
-            }
+        menuBar.addItem(MENU_HOME_NAME, selectedItem -> {
+            viewNavigator.navigateTo(MENU_HOME_VIEW_NAME);
         });
-        menuBar.addItem(MENU_DOCTORS_NAME, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                viewNavigator.navigateTo(MENU_DOCTORS_VIEW_NAME);
-            }
+        menuBar.addItem(MENU_DOCTORS_NAME, selectedItem -> {
+            viewNavigator.navigateTo(MENU_DOCTORS_VIEW_NAME);
         });
-        menuBar.addItem(MENU_PATIENTS_NAME, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                viewNavigator.navigateTo(MENU_PATIENTS_VIEW_NAME);
-            }
+        menuBar.addItem(MENU_PATIENTS_NAME, selectedItem -> {
+            viewNavigator.navigateTo(MENU_PATIENTS_VIEW_NAME);
         });
-        menuBar.addItem(MENU_RECIPES_NAME, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                viewNavigator.navigateTo(MENU_RECIPES_VIEW_NAME);
-            }
+        menuBar.addItem(MENU_RECIPES_NAME, selectedItem -> {
+            viewNavigator.navigateTo(MENU_RECIPES_VIEW_NAME);
         });
         header.addComponent(menuBar);
     }

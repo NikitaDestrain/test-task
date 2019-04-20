@@ -6,6 +6,7 @@ import com.haulmont.testtask.exception.controller.DataControllerReadingException
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
 import com.haulmont.testtask.view.sub.modal.manipulation.PatientModalWindow;
+import com.haulmont.testtask.view.ui.UIHelper;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -32,6 +33,8 @@ public class PatientView extends VerticalLayout implements View {
     private static final String EDIT_BUTTON_TEXT = "Edit";
     private static final String DELETE_BUTTON_TEXT = "Delete";
 
+    private static final String TAB_NAME = "Patient information";
+
     private Table patientTable;
     private MenuBar menuBar;
     private MenuBar.MenuItem addItem;
@@ -49,62 +52,70 @@ public class PatientView extends VerticalLayout implements View {
 
     private void initMenuBar() {
         menuBar = new MenuBar();
-        addItem = menuBar.addItem(ADD_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                PatientModalWindow pMW = new PatientModalWindow(dataController);
+        addItem = menuBar.addItem(ADD_BUTTON_TEXT, selectedItem -> {
+            PatientModalWindow pMW = new PatientModalWindow(dataController);
+            pMW.addCloseListener(closeEvent -> {
+                try {
+                    refreshTable();
+                } catch (RefreshTableException e) {
+                    System.out.println(e.getMessage());
+                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
+                }
+            });
+            getUI().addWindow(pMW);
+        });
+        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, selectedItem -> {
+            Object tableValue = patientTable.getValue();
+            if (tableValue != null) {
+                PatientModalWindow pMW = new PatientModalWindow(
+                        (Long) tableValue,
+                        patientTable.getItem(tableValue),
+                        dataController);
                 pMW.addCloseListener(closeEvent -> {
                     try {
                         refreshTable();
                     } catch (RefreshTableException e) {
-                        System.out.println(e.getMessage());
                         Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
                     }
                 });
                 getUI().addWindow(pMW);
             }
         });
-        editItem = menuBar.addItem(EDIT_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Object tableValue = patientTable.getValue();
-                if (tableValue != null) {
-                    PatientModalWindow pMW = new PatientModalWindow(
-                            (Long) tableValue,
-                            patientTable.getItem(tableValue),
-                            dataController);
-                    pMW.addCloseListener(closeEvent -> {
-                        try {
-                            refreshTable();
-                        } catch (RefreshTableException e) {
-                            Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
-                        }
-                    });
-                    getUI().addWindow(pMW);
+        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, selectedItem -> {
+            Object tableValue = patientTable.getValue();
+            if (tableValue != null) {
+                try {
+                    dataController.remove((Long) tableValue);
+                } catch (DataControllerRemovingException e) {
+                    Notification.show(PATIENT_RECIPE_CONSTRAINT_MESSAGE, Notification.Type.ERROR_MESSAGE);
                 }
             }
-        });
-        deleteItem = menuBar.addItem(DELETE_BUTTON_TEXT, new MenuBar.Command() {
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Object tableValue = patientTable.getValue();
-                if (tableValue != null) {
-                    try {
-                        dataController.remove((Long) tableValue);
-                    } catch (DataControllerRemovingException e) {
-                        Notification.show(PATIENT_RECIPE_CONSTRAINT_MESSAGE, Notification.Type.ERROR_MESSAGE);
-                    }
-                }
-                try {
-                    refreshTable();
-                } catch (RefreshTableException e) {
-                    Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
-                }
+            try {
+                refreshTable();
+            } catch (RefreshTableException e) {
+                Notification.show(DEFAULT_ERROR_MESSAGE, Notification.Type.ERROR_MESSAGE);
             }
         });
     }
 
     private void createFrame() {
         setMargin(true);
-        addComponents(menuBar, patientTable);
+        Label tabName = new Label(TAB_NAME);
+        tabName.setStyleName(UIHelper.TAB_NAME_STYLE);
+        addComponents(tabName, menuBar, patientTable);
         setComponentAlignment(menuBar, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(tabName, Alignment.TOP_CENTER);
+        setSpacing(true);
+
+        addLayoutClickListener(layoutClickEvent -> {
+            Object selectedValue = patientTable.getValue();
+            if (selectedValue != null &&
+                    !(layoutClickEvent.getClickedComponent() instanceof Table) &&
+                    !(layoutClickEvent.getClickedComponent() instanceof MenuBar)) {
+                patientTable.unselect(selectedValue);
+                disableButtons();
+            }
+        });
     }
 
     private void initTable() {

@@ -6,4 +6,6 @@ public interface DataControllerManager {
     PatientDataController getPatientDataController();
 
     RecipeDataController getRecipeDataController();
+
+    StatisticDataController getStatisticDataController();
 }

@@ -6,8 +6,8 @@ import com.haulmont.testtask.exception.controller.DataControllerCreationExceptio
 import com.haulmont.testtask.exception.controller.DataControllerUpdatingException;
 import com.haulmont.testtask.factory.dto.PatientDTOFactory;
 import com.haulmont.testtask.view.sub.PatientView;
-import com.haulmont.testtask.view.sub.interfaces.ModalWindow;
-import com.haulmont.testtask.view.sub.interfaces.ModalWindowConstants;
+import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindow;
+import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindowConstants;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;

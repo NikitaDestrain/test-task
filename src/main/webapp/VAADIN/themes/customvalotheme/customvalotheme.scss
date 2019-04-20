@@ -1,0 +1,20 @@
+@import "../valo/valo";
+
+@mixin customvalotheme {
+  @include valo;
+  font-family: 'Source Sans Pro', courier, monospace;
+
+  .v-label pre {
+    font-family: 'Source Sans Pro', courier, monospace;
+  }
+
+  .v-tab-name {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  .v-select-optiongroup-horizontal .v-select-option {
+    display: inline-block;
+  }
+}

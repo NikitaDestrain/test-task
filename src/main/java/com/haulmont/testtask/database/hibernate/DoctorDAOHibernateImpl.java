@@ -4,7 +4,6 @@ import com.haulmont.testtask.database.interfaces.DoctorDAO;
 import com.haulmont.testtask.database.utils.dto.DoctorResolver;
 import com.haulmont.testtask.database.utils.hibernate.HibernateUtil;
 import com.haulmont.testtask.domain.dto.DoctorDTO;
-import com.haulmont.testtask.domain.dto.DoctorStatisticDTO;
 import com.haulmont.testtask.domain.entity.Doctor;
 import com.haulmont.testtask.exception.database.DAOEntityCreationException;
 import com.haulmont.testtask.exception.database.DAOEntityDeletingException;
@@ -114,43 +113,6 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
         } finally {
             finishSession();
         }
-    }
-
-    @Override
-    public DoctorStatisticDTO readStatistic(Long id) throws DAOEntityReadingException {
-        DoctorStatisticDTO doctorStatisticDTO;
-        try {
-            entityManager = HibernateUtil.getEntityManager();
-            entityManager.getTransaction().begin();
-            Doctor doctor = entityManager.find(Doctor.class, id);
-            doctorStatisticDTO = doctorResolver.resolveToStatisticDTO(doctor);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            throw new DAOEntityReadingException(e.getMessage());
-        } finally {
-            finishSession();
-        }
-        return doctorStatisticDTO;
-    }
-
-    @Override
-    public List<DoctorStatisticDTO> readStatisticForAll() throws DAOEntityReadingException {
-        List<DoctorStatisticDTO> list = new ArrayList<>();
-        try {
-            entityManager = HibernateUtil.getEntityManager();
-            entityManager.getTransaction().begin();
-            for (DoctorDTO doctorDTO : getAll()) {
-                Doctor doctor = entityManager.find(Doctor.class, doctorDTO.getId());
-                DoctorStatisticDTO doctorStatisticDTO = doctorResolver.resolveToStatisticDTO(doctor);
-                list.add(doctorStatisticDTO);
-            }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            throw new DAOEntityReadingException(e.getMessage());
-        } finally {
-            finishSession();
-        }
-        return Collections.unmodifiableList(list);
     }
 
     private void finishSession() {

@@ -1,9 +1,6 @@
 package com.haulmont.testtask.controller.implementation;
 
-import com.haulmont.testtask.controller.interfaces.DataControllerManager;
-import com.haulmont.testtask.controller.interfaces.DoctorDataController;
-import com.haulmont.testtask.controller.interfaces.PatientDataController;
-import com.haulmont.testtask.controller.interfaces.RecipeDataController;
+import com.haulmont.testtask.controller.interfaces.*;
 import com.haulmont.testtask.database.hibernate.DAOManagerHibernateImpl;
 
 public class DataControllerManagerImpl implements DataControllerManager {
@@ -13,6 +10,7 @@ public class DataControllerManagerImpl implements DataControllerManager {
     private DoctorDataController doctorDataController;
     private PatientDataController patientDataController;
     private RecipeDataController recipeDataController;
+    private StatisticDataController statisticDataController;
 
     private DataControllerManagerImpl() {
         daoManagerHibernate = DAOManagerHibernateImpl.getInstance();
@@ -53,5 +51,13 @@ public class DataControllerManagerImpl implements DataControllerManager {
                 daoManagerHibernate.getRecipeDao()
         );
         return recipeDataController;
+    }
+
+    @Override
+    public StatisticDataController getStatisticDataController() {
+        if (statisticDataController == null) statisticDataController = new StatisticDataControllerImpl(
+                getRecipeDataController()
+        );
+        return statisticDataController;
     }
 }

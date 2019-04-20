@@ -3,7 +3,6 @@ package com.haulmont.testtask.controller.implementation;
 import com.haulmont.testtask.controller.interfaces.DoctorDataController;
 import com.haulmont.testtask.database.interfaces.DoctorDAO;
 import com.haulmont.testtask.domain.dto.DoctorDTO;
-import com.haulmont.testtask.domain.dto.DoctorStatisticDTO;
 import com.haulmont.testtask.exception.controller.DataControllerCreationException;
 import com.haulmont.testtask.exception.controller.DataControllerReadingException;
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
@@ -15,7 +14,6 @@ import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -72,24 +70,6 @@ public class DoctorDataControllerImpl implements DoctorDataController {
     public List<DoctorDTO> getAll() throws DataControllerReadingException {
         try {
             return doctorDAO.getAll();
-        } catch (DAOEntityReadingException e) {
-            throw new DataControllerReadingException(e.getMessage());
-        }
-    }
-
-    @Override
-    public DoctorStatisticDTO getStatisticForId(Long id) throws DataControllerReadingException {
-        try {
-            return doctorDAO.readStatistic(id);
-        } catch (DAOEntityReadingException e) {
-            throw new DataControllerReadingException(e.getMessage());
-        }
-    }
-
-    @Override
-    public List<DoctorStatisticDTO> getStatisticForAll() throws DataControllerReadingException {
-        try {
-            return doctorDAO.readStatisticForAll();
         } catch (DAOEntityReadingException e) {
             throw new DataControllerReadingException(e.getMessage());
         }

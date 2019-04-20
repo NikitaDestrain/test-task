@@ -1,4 +1,4 @@
-package com.haulmont.testtask.view.sub.interfaces;
+package com.haulmont.testtask.view.sub.modal.interfaces;
 
 import com.vaadin.ui.*;
 
@@ -42,6 +42,8 @@ public abstract class ModalWindow<T> extends Window {
 
         buttonLayout = new HorizontalLayout();
         buttonLayout.addComponents(submitButton, cancelButton);
+        buttonLayout.setComponentAlignment(submitButton, Alignment.BOTTOM_CENTER);
+        buttonLayout.setComponentAlignment(cancelButton, Alignment.BOTTOM_CENTER);
         buttonLayout.setSpacing(true);
 
         mainLayout.addComponents(formLayout, buttonLayout);
