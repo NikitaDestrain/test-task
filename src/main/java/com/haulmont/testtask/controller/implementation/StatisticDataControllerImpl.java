@@ -2,7 +2,6 @@ package com.haulmont.testtask.controller.implementation;
 
 import com.haulmont.testtask.controller.interfaces.RecipeDataController;
 import com.haulmont.testtask.controller.interfaces.StatisticDataController;
-import com.haulmont.testtask.database.interfaces.RecipeDAO;
 import com.haulmont.testtask.domain.auxiliary.DoctorStatistic;
 import com.haulmont.testtask.domain.auxiliary.Priority;
 import com.haulmont.testtask.domain.dto.DoctorDTO;

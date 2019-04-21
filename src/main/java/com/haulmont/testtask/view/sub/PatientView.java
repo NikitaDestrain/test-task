@@ -6,15 +6,15 @@ import com.haulmont.testtask.exception.controller.DataControllerReadingException
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
 import com.haulmont.testtask.view.sub.modal.manipulation.PatientModalWindow;
-import com.haulmont.testtask.view.ui.UIHelper;
+import com.haulmont.testtask.view.utils.UIHelper;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 
 import java.util.List;
 
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.PATIENT_RECIPE_CONSTRAINT_MESSAGE;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.PATIENT_RECIPE_CONSTRAINT_MESSAGE;
 
 public class PatientView extends VerticalLayout implements View {
 
@@ -165,7 +165,6 @@ public class PatientView extends VerticalLayout implements View {
         patientTable.setImmediate(true);
         patientTable.setNullSelectionAllowed(false);
         patientTable.setSizeFull();
-        patientTable.setPageLength(patientTable.size());
         patientTable.setFooterVisible(true);
     }
 

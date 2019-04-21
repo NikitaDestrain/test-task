@@ -6,7 +6,11 @@ import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindow;
 import com.haulmont.testtask.view.utils.DoctorStatisticToFullNameConverter;
 import com.haulmont.testtask.view.utils.DoctorStatisticToStatisticConverter;
 import com.haulmont.testtask.view.utils.StatisticToStringConverter;
-import com.vaadin.ui.*;
+import com.haulmont.testtask.view.utils.UIHelper;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
 
 import java.util.Map;
 
@@ -46,6 +50,7 @@ public class StatisticModalWindow extends ModalWindow<StatisticDTO> {
         setCaption(WINDOW_NAME);
         statisticLayout = new VerticalLayout();
         Label tabName = new Label(TAB_NAME);
+        tabName.setStyleName(UIHelper.TAB_NAME_STYLE);
         setWidth(STATISTIC_WINDOW_WIDTH);
         setHeight(STATISTIC_WINDOW_HEIGHT);
         submitButton.setVisible(false);
@@ -110,7 +115,6 @@ public class StatisticModalWindow extends ModalWindow<StatisticDTO> {
         statisticTable.setConverter(TABLE_DOCTOR_COLUMN, new DoctorStatisticToFullNameConverter());
         statisticTable.setConverter(TABLE_TOTAL_COLUMN, new DoctorStatisticToStatisticConverter());
         statisticTable.setSizeFull();
-        statisticTable.setPageLength(statisticTable.size());
         statisticTable.setFooterVisible(true);
     }
 
@@ -127,7 +131,7 @@ public class StatisticModalWindow extends ModalWindow<StatisticDTO> {
                     doctorStatistic
             }, key);
         }
-        statisticTable.setColumnFooter(TABLE_DOCTOR_COLUMN, "Total");
+        statisticTable.setColumnFooter(TABLE_DOCTOR_COLUMN, TABLE_TOTAL_HEADER);
         statisticTable.setColumnFooter(
                 TABLE_TOTAL_COLUMN,
                 new StatisticToStringConverter().convertToPresentation(statisticDTO, String.class, null)

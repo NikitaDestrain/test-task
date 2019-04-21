@@ -11,10 +11,10 @@ import com.haulmont.testtask.exception.controller.DataControllerReadingException
 import com.haulmont.testtask.exception.controller.DataControllerRemovingException;
 import com.haulmont.testtask.exception.view.RefreshTableException;
 import com.haulmont.testtask.view.sub.modal.manipulation.RecipeModalWindow;
-import com.haulmont.testtask.view.ui.UIHelper;
 import com.haulmont.testtask.view.utils.DoctorToStringConverter;
 import com.haulmont.testtask.view.utils.PatientToStringConverter;
 import com.haulmont.testtask.view.utils.PriorityToStringConverter;
+import com.haulmont.testtask.view.utils.UIHelper;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.data.util.filter.SimpleStringFilter;
@@ -28,7 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.*;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION;
 
 public class RecipeView extends VerticalLayout implements View {
 
@@ -58,6 +59,7 @@ public class RecipeView extends VerticalLayout implements View {
     private static final String FILTER_DISCARD_BUTTON_TEXT = "Discard";
 
     private static final String TAB_NAME = "Recipe information";
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
 
     private Table recipeTable;
     private MenuBar menuBar;
@@ -215,7 +217,7 @@ public class RecipeView extends VerticalLayout implements View {
                 new StringToDateConverter() {
                     @Override
                     public DateFormat getFormat(Locale locale) {
-                        return new SimpleDateFormat("dd.MM.yyyy");
+                        return new SimpleDateFormat(DATE_FORMAT);
                     }
                 }
         );
@@ -224,7 +226,7 @@ public class RecipeView extends VerticalLayout implements View {
                 new StringToDateConverter() {
                     @Override
                     public DateFormat getFormat(Locale locale) {
-                        return new SimpleDateFormat("dd.MM.yyyy");
+                        return new SimpleDateFormat(DATE_FORMAT);
                     }
                 }
         );
@@ -245,7 +247,6 @@ public class RecipeView extends VerticalLayout implements View {
         recipeTable.setImmediate(true);
         recipeTable.setNullSelectionAllowed(false);
         recipeTable.setSizeFull();
-        recipeTable.setPageLength(recipeTable.size());
         recipeTable.setFooterVisible(true);
     }
 

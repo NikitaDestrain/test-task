@@ -2,16 +2,16 @@ package com.haulmont.testtask.view.ui;
 
 import com.haulmont.testtask.controller.implementation.DataControllerManagerImpl;
 import com.haulmont.testtask.controller.interfaces.DataControllerManager;
-import com.haulmont.testtask.view.index.HomeView;
 import com.haulmont.testtask.view.sub.DoctorView;
+import com.haulmont.testtask.view.sub.HomeView;
 import com.haulmont.testtask.view.sub.PatientView;
 import com.haulmont.testtask.view.sub.RecipeView;
+import com.haulmont.testtask.view.utils.UIHelper;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewDisplay;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
-import com.vaadin.ui.MenuBar;
 
 
 @Theme(UIHelper.THEME_NAME)
@@ -19,13 +19,12 @@ public class MainUI extends UI {
     private static final String PAGE_TITLE = "Hospital Recipe System";
 
     private static final String HEADER_WIDTH = "100%";
-    private static final int HEADER_EXPAND_RATIO = 1;
 
     private static final String SHOW_LAYOUT_WIDTH = "100%";
     private static final String SHOW_LAYOUT_HEIGHT = "100%";
     private static final int SHOW_LAYOUT_EXPAND_RATIO = 1;
 
-    private static final String MAIN_LAYOUT_WIDTH = "100%";
+    private static final String MAIN_LAYOUT_HEIGHT = "100%";
 
     private static final String MENU_HOME_VIEW_NAME = "";
     private static final String MENU_DOCTORS_VIEW_NAME = "doctors";
@@ -65,11 +64,10 @@ public class MainUI extends UI {
 
     private void initMainLayout() {
         mainLayout = new VerticalLayout();
-        mainLayout.setHeight(MAIN_LAYOUT_WIDTH);
+        mainLayout.setHeight(MAIN_LAYOUT_HEIGHT);
         mainLayout.addComponents(header, showLayout);
         mainLayout.setComponentAlignment(header, Alignment.TOP_CENTER);
         mainLayout.setComponentAlignment(showLayout, Alignment.MIDDLE_CENTER);
-        //mainLayout.setExpandRatio(header, HEADER_EXPAND_RATIO);
         mainLayout.setExpandRatio(showLayout, SHOW_LAYOUT_EXPAND_RATIO);
     }
 
@@ -108,15 +106,13 @@ public class MainUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        this.getPage().setTitle(PAGE_TITLE);
-
+        getPage().setTitle(PAGE_TITLE);
         initHeader();
         initShowLayout();
         initMainLayout();
         initViewDisplay();
         initViewNavigator();
         initMenuBar();
-
         setContent(mainLayout);
     }
 }

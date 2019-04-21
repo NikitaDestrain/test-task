@@ -59,9 +59,10 @@ public class DoctorDAOHibernateImpl implements DoctorDAO {
     @Override
     public void update(DoctorDTO doctor) throws DAOEntityUpdatingException {
         try {
-            Doctor doctorEntity = doctorResolver.resolveToEntity(doctor);
             entityManager = HibernateUtil.getEntityManager();
             entityManager.getTransaction().begin();
+            Doctor doctorEntity = entityManager.find(Doctor.class, doctor.getId());
+            doctorResolver.resolveToEntity(doctor, doctorEntity);
             entityManager.merge(doctorEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {

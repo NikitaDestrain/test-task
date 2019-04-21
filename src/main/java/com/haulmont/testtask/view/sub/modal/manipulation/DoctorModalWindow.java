@@ -7,7 +7,6 @@ import com.haulmont.testtask.exception.controller.DataControllerUpdatingExceptio
 import com.haulmont.testtask.factory.dto.DoctorDTOFactory;
 import com.haulmont.testtask.view.sub.DoctorView;
 import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindow;
-
 import com.haulmont.testtask.view.sub.modal.interfaces.ModalWindowConstants;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
@@ -15,7 +14,8 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.*;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.INCORRECT_INPUT_DATA_MESSAGE;
 
 public class DoctorModalWindow extends ModalWindow<DoctorDTO> {
 

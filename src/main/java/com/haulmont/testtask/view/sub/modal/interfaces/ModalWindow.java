@@ -5,7 +5,7 @@ import com.vaadin.ui.*;
 public abstract class ModalWindow<T> extends Window {
 
     private static final String WINDOW_WIDTH = "35%";
-    private static final String WINDOW_HEIGHT = "40%";
+    private static final String WINDOW_HEIGHT = "50%";
     private static final String SUBMIT_BUTTON_TEXT = "Submit";
     private static final String CANCEL_BUTTON_TEXT = "Cancel";
 

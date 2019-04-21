@@ -9,7 +9,7 @@ import com.haulmont.testtask.exception.controller.DataControllerStatisticCreatio
 import com.haulmont.testtask.exception.view.RefreshTableException;
 import com.haulmont.testtask.view.sub.modal.manipulation.DoctorModalWindow;
 import com.haulmont.testtask.view.sub.modal.statistic.StatisticModalWindow;
-import com.haulmont.testtask.view.ui.UIHelper;
+import com.haulmont.testtask.view.utils.UIHelper;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -18,8 +18,8 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DOCTOR_RECIPE_CONSTRAINT_MESSAGE;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DOCTOR_RECIPE_CONSTRAINT_MESSAGE;
 
 @Theme(ValoTheme.THEME_NAME)
 public class DoctorView extends VerticalLayout implements View {
@@ -190,7 +190,6 @@ public class DoctorView extends VerticalLayout implements View {
         doctorTable.setImmediate(true);
         doctorTable.setNullSelectionAllowed(false);
         doctorTable.setSizeFull();
-        doctorTable.setPageLength(doctorTable.size());
         doctorTable.setFooterVisible(true);
     }
 

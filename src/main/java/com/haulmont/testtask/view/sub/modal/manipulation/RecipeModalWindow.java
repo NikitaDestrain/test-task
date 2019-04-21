@@ -22,13 +22,16 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.shared.ui.combobox.FilteringMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 
-import java.util.ArrayList;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.*;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.*;
 
 public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
 
@@ -36,6 +39,7 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
     private static final String ADD_PATIENT = "Add recipe";
 
     private static final String RECIPE_WINDOW_WIDTH = "70%";
+    private static final String RECIPE_WINDOW_HEIGHT = "70%";
     private static final int DEFAULT_PRIORITY = 0;
 
     private TextArea descriptionField;
@@ -198,6 +202,7 @@ public class RecipeModalWindow extends ModalWindow<RecipeDTO> {
         formLayout.addComponents(descriptionField, patientField, doctorField, expirationDateField, priorityField);
         setContent(mainLayout);
         setWidth(RECIPE_WINDOW_WIDTH);
+        setHeight(RECIPE_WINDOW_HEIGHT);
     }
 
     private void initPatientField(PatientDTO currentPatient, boolean isEdit) {

@@ -12,15 +12,11 @@ import com.haulmont.testtask.exception.database.DAOEntityDeletingException;
 import com.haulmont.testtask.exception.database.DAOEntityReadingException;
 import com.haulmont.testtask.exception.database.DAOEntityUpdatingException;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class DoctorDataControllerImpl implements DoctorDataController {
 
     private DoctorDAO doctorDAO;
-    private Logger logger = Logger.getLogger(DoctorDataControllerImpl.class.getName());
 
     public DoctorDataControllerImpl(DoctorDAO doctorDAO) {
         this.doctorDAO = doctorDAO;
@@ -59,9 +55,6 @@ public class DoctorDataControllerImpl implements DoctorDataController {
             DoctorDTO doctor = doctorDAO.read(id);
             doctorDAO.delete(doctor);
         } catch (DAOEntityDeletingException | DAOEntityReadingException e) {
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            logger.severe(sw.toString());
             throw new DataControllerRemovingException(e.getMessage());
         }
     }

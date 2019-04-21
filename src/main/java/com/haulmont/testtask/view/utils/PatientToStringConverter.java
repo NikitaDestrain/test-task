@@ -27,7 +27,7 @@ public class PatientToStringConverter implements Converter<String, PatientDTO> {
             return sb.toString();
         } else {
             return "Unknown";
-        } 
+        }
     }
 
     @Override

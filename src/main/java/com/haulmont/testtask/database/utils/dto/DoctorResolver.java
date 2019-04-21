@@ -44,4 +44,11 @@ public class DoctorResolver {
                 doctor.getSpecialization()
         );
     }
+
+    public void resolveToEntity(DoctorDTO doctor, Doctor doctorEntity) {
+        doctorEntity.setName(doctor.getName());
+        doctorEntity.setSurname(doctor.getSurname());
+        doctorEntity.setPatronymic(doctor.getPatronymic());
+        doctorEntity.setSpecialization(doctor.getSpecialization());
+    }
 }

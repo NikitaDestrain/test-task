@@ -14,8 +14,8 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION;
-import static com.haulmont.testtask.view.sub.NotificationMessageConstants.INCORRECT_INPUT_DATA_MESSAGE;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.DEFAULT_ERROR_MESSAGE_WITH_TRY_AGAIN_SUGGESTION;
+import static com.haulmont.testtask.view.utils.NotificationMessageConstants.INCORRECT_INPUT_DATA_MESSAGE;
 
 public class PatientModalWindow extends ModalWindow<PatientDTO> {
 

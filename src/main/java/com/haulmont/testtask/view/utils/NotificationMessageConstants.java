@@ -1,4 +1,4 @@
-package com.haulmont.testtask.view.sub;
+package com.haulmont.testtask.view.utils;
 
 public class NotificationMessageConstants {
     public static final String
@@ -11,5 +11,4 @@ public class NotificationMessageConstants {
                     "\n\nPlease, make sure the petient has no recipes" +
                     "\n\nClick me and try again",
             INCORRECT_INPUT_DATA_MESSAGE = "Incorrect input data :(\n\nClick me and try again";
-
 }

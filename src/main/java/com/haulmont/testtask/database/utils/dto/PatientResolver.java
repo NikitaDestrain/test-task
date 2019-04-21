@@ -44,4 +44,11 @@ public class PatientResolver {
                 patient.getPhoneNumber()
         );
     }
+
+    public void resolveToEntity(PatientDTO patient, Patient patientEntity) {
+        patientEntity.setName(patient.getName());
+        patientEntity.setSurname(patient.getSurname());
+        patientEntity.setPatronymic(patient.getPatronymic());
+        patientEntity.setPhoneNumber(patient.getPhoneNumber());
+    }
 }
